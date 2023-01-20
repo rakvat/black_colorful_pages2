@@ -1,0 +1,7 @@
+__pycache__
+config.json
+config_strato.json
+dependencies.py
+static/contact_images
+static/impressum.png
+static/header.png
