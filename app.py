@@ -11,13 +11,26 @@ app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
 mysql = MySQL(app)
 
+with open('l10n/structure.json', 'r', encoding='utf-8') as f:
+    L = json.load(f)
+
+def _get_lang():
+    return request.args.get('lang') or app.config['DEFAULT_LANG']
+
 @app.route("/")
 def index():
-    return render_template('index.html')
+    lang = _get_lang()
+    return render_template('index.html', lang=lang, L=L[lang])
 
 @app.route("/list")
 def list():
     filter = Filter.from_request(request)
-    contacts = DBContact(mysql=mysql, lang_code="en").all_contacts(filter=filter)
+    lang = _get_lang()
+    contacts = DBContact(mysql=mysql, lang=lang).all_contacts(filter=filter)
 
-    return render_template('list.html', contacts=contacts)
+    return render_template('list.html', contacts=contacts, lang=lang, L=L[lang])
+
+@app.route("/imprint")
+def imprint():
+    lang = _get_lang()
+    return render_template('imprint.html', lang=lang, L=L[lang])

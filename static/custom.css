@@ -68,16 +68,28 @@
      background: #ffffff;
  }
 
- a.impressum {
-     font-size: 70%;
-     color: #000000;
-     text-decoration:none;
- }
 
- div.bottomup {
-     position:relative;
-     float:left;
-     width: 150px;
-     padding: 5px;
-     color: #D4D7CA;
- }
+
+.container {
+    background-color: #b1161d;
+}
+.header {
+    width: 100%;
+    max-width: 1000px;
+}
+.bottom {
+    display: flex;
+    justify-content: space-between;
+    background-color: #b1161d;
+    padding: 10px;
+    height: 30px;
+}
+.bottom a {
+    color: black;
+}
+.imprint {
+    font-size: 70%;
+    color: #000000;
+    text-decoration:none;
+}
+

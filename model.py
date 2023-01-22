@@ -20,7 +20,7 @@ class Filter:
     is_group: bool
     is_location: bool
     is_media: bool
-    query: str | None = None
+    query: str
 
     @staticmethod
     def from_request(request) -> "Filter":
@@ -28,5 +28,5 @@ class Filter:
             is_group = request.args.get('group') is not None,
             is_location = request.args.get('location') is not None,
             is_media = request.args.get('media') is not None,
-            query = request.args.get('query')
+            query = request.args.get('query') or "",
         )

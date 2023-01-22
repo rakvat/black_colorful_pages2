@@ -3,5 +3,5 @@ config.json
 config_strato.json
 dependencies.py
 static/contact_images
-static/impressum.png
+static/imprint.png
 static/header.png

@@ -1,7 +1,64 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Schwarz-Bunte Seiten Berlin</h1>
-    <h2>Welcome to the black-colorful pages Berlin, your pool for left-radical and emancipatory addresses!</h2>
-    <a href="{{ url_for('list') }}">zu den addressen</a>
+<h2>{{L['start']['title_line_1']}}<br/>{{L['start']['title_line_2']}}</h2>
+
+<div class="w3-row">
+  <a href="{{ url_for('list', lang=lang) }}">{{L['start']['to_addressess_link']}}</a>
+  <a href="{{ url_for('index', lang='de')}}">de</a> | <a href="{{ url_for('index', lang='en')}}">en</a>
+</div>
+
+<h3>{{L['start']['we_offer_header']}}</h3>
+
+<div>
+  <p>{{L['start']['we_offer_p1']}}</p>
+  <p>{{L['start']['we_offer_p2']}}</p>
+
+  <p>{{L['start']['we_offer_how_to_question']}}</p>
+  <ul>
+    <li>
+      <i>{{L['start']['we_offer_example_question_1']}}</i>&nbsp;
+      <a href="{{url_for('list', lang=lang, query='A17')}}">
+        {{L['start']['we_offer_search_example_link']}}:
+      </a>
+      {{L['start']['we_offer_example_answer_1']}}
+    </li>
+    <li>
+      <i>{{L['start']['we_offer_example_question_2']}}</i>&nbsp;
+      <a href="{{url_for('list', lang=lang, query='Bibliothek der Freien')}}">
+        {{L['start']['we_offer_search_example_link']}}:
+      </a>
+      {{L['start']['we_offer_example_answer_2']}}
+    </li>
+    <li>
+      <i>{{L['start']['we_offer_example_question_3']}}</i>&nbsp;
+      <a href="{{url_for('list', lang=lang, query='Food for Action')}}">
+        {{L['start']['we_offer_search_example_link']}}:
+      </a>
+      {{L['start']['we_offer_example_answer_3']}}
+    </li>
+  </ul>
+
+  <p>{{L['start']['we_offer_p3']}}</p>
+  <p>{{L['start']['we_offer_p4']}}</p>
+</div>
+
+<h3>{{L['start']['we_dont_offer_header']}}</h3>
+<div>
+  <p>{{L['start']['we_dont_offer_p1']}}</p>
+  <p>{{L['start']['we_dont_offer_p2']}}</p>
+  <p>{{L['start']['we_dont_offer_p3']}}</p>
+  <p>{{L['start']['we_dont_offer_p4']}}</p>
+</div>
+
+<h3>{{L['start']['what_to_do_header']}}</h3>
+<div>
+  <p>{{L['start']['what_to_do_p1']}}</p>
+  <p>{{L['start']['what_to_do_p2']}}</p>
+  <p>{{L['start']['what_to_do_p3']}} <b>info \-at-\ schwarz-bunte-seiten-berlin.org.</b></p>
+  <br/><br/>
+  <i><b>{{L['start']['signature']}}</b></i><br/><br/>
+  <br/><br/>
+  <a href="{{ url_for('list', lang=lang) }}">{{L['start']['to_addressess_link']}}</a>
+</div>
 {% endblock %}

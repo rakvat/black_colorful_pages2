@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 
-from wsgiref.handlers import CGIHandler
-from app import app
+try:
+    from wsgiref.handlers import CGIHandler
+    from app import app
 
-CGIHandler().run(app)
+    CGIHandler().run(app)
+except Exception as e:
+    # TODO remove block for prod
+    print("Content-Type: text/html\n\n")
+    print(e)

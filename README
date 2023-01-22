@@ -1,2 +1,10 @@
-flask --app app --debug run
+# Source code for Schwarz-Bunte-Seiten-Berlin
 
+## Requirements
+
+Python 3.8 (that's what the host supports, sorry).
+pip install -r requirements.in
+
+## Run
+
+flask --app app --debug run

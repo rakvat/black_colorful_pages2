@@ -1,63 +1,80 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="w3-row">
-        <form action="/list">
-            <div class="w3-third">
-                <input
-                    id="group" class="w3-input" type="checkbox" name="group"
-                    {% if request.args.get('group') %}checked{% endif %}
-                />
-                <label for="group">Gruppen</label>
-            </div>
-            <div class="w3-third">
-                <input
-                    id="location" class="w3-input" type="checkbox" name="location"
-                    {% if request.args.get('location') %}checked{% endif %}
-                />
-                <label for="location">Orte</label>
-            </div>
-            <div class="w3-third">
-                <input
-                    id="media" class="w3-input" type="checkbox" name="media"
-                    {% if request.args.get('media') %}checked{% endif %}
-                />
-                <label for="media">Medien</label>
-            </div>
-            <div class="w3-third">
-                <input
-                    id="query" class="w3-input" type="text" placeholder="Suchbegriff" name="query"
-                    value="{{request.args.get('query') or ''}}"
-                />
-                <label for="query">Suchbegriff</label>
-            </div>
-            <button class="w3-third w3-button w3-black" type="submit">Suchen</button>
-        </form>
-        <a class="w3-third w3-button w3-black" href="/list">Zurücksetzen</a>
+<div class="w3-row">
+  <form action="{{url_for('list', lang=lang)}}">
+    <div class="w3-third">
+      <input
+          id="group" class="w3-input" type="checkbox" name="group"
+          {% if request.args.get('group') %}checked{% endif %}
+      />
+      <label for="group">{{L['list']['group_filter']}}</label>
     </div>
-    {% for contact in contacts %}
-        <div class="w3-row">
-            <h3>{{contact.name}}</h3>
-            <div class="w3-third">
-                {% if contact.image %}
-                    <img src="static/contact_images/{{contact.image}}" alt="logo or image of {{contact.name}}" />
-                {% endif %}
-                <h4>Beschreibung</h4>
-                {{contact.description}}
-                <h4>Ressourcen</h4>
-                {{contact.resources}}
-            </div>
-            <div class="w3-third">
-                <h4>Addressen</h4>
-                {{contact.addresses}}
-                <h4>Kontakt</h4>
-                {{contact.contact}}
+    <div class="w3-third">
+      <input
+          id="location" class="w3-input" type="checkbox" name="location"
+          {% if request.args.get('location') %}checked{% endif %}
+      />
+      <label for="location">{{L['list']['location_filter']}}</label>
+    </div>
+    <div class="w3-third">
+      <input
+          id="media" class="w3-input" type="checkbox" name="media"
+          {% if request.args.get('media') %}checked{% endif %}
+      />
+      <label for="media">{{L['list']['media_filter']}}</label>
+    </div>
+    <div class="w3-third">
+      <input
+          id="query" class="w3-input" type="text" placeholder="{{L['list']['search_query_filter']}}" name="query"
+          value="{{request.args.get('query') or ''}}"
+      />
+      <label for="query">{{L['list']['search_query_filter']}}</label>
+    </div>
+    <button class="w3-third w3-button w3-black" type="submit">{{L['list']['search_button']}}</button>
+  </form>
+  <a class="w3-third w3-button w3-black" href="{{url_for('list', lang=lang)}}">{{L['list']['reset_search_button']}}</a>
+  <span>{{contacts|length}} {{L['list']['num_structures_label']}}</span>
+  <a href="{{ url_for('list', lang='de')}}">de</a> | <a href="{{ url_for('list', lang='en')}}">en</a>
+</div>
+{% for contact in contacts %}
+<div class="w3-row">
+  <h3>{{contact.name}}</h3>
+  <div class="w3-third">
+    <h4>{{L['list']['description_header']}}</h4>
+    {{contact.short_description}}
+    {{contact.description}}
+    <h4>{{L['list']['resources_header']}}</h4>
+  </div>
+  <div class="w3-third">
+    <h4>{{L['list']['addresses_header']}}</h4>
+    {{contact.base_address}}
+    {{contact.addresses}}
+  </div>
+  <div class="w3-third">
+    <h4>{{L['list']['contact_header']}}</h4>
+  </div>
 
-                {{contact.email}}
-            </div>
-            <div class="w3-third">
-                {{contact.geo_coords}}
-            </div>
-        </div>
+  <!--div class="w3-third">
+    {% if contact.image %}
+    <img src="static/contact_images/{{contact.image}}" alt="logo or image of {{contact.name}}" />
+    {% endif %}
+    <h4>Beschreibung</h4>
+    {{contact.description}}
+    <h4>Ressourcen</h4>
+    {{contact.resources}}
+    </div>
+    <div class="w3-third">
+    <h4>Addressen</h4>
+    {{contact.addresses}}
+    <h4>Kontakt</h4>
+    {{contact.contact}}
+
+    {{contact.email}}
+    </div>
+    <div class="w3-third">
+    {{contact.geo_coords}}
+    </div-->
+    </div>
     {% endfor %}
-{% endblock %}
+    {% endblock %}

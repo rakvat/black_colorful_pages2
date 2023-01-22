@@ -1,16 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
-    <title>Schwarz-Bunte-Seiten-Berlin</title>
+    <title>Schwarz-Bunte-Seiten Berlin</title>
     <link rel="stylesheet" href="static/w3.css" type="text/css" media="screen">
     <link rel="stylesheet" href="static/custom.css" type="text/css" media="screen">
+    <link rel="icon" href="static/favicon.ico?v=3" sizes="16x16 32x32 48x48 64x64 128x128" type="image/vnd.microsoft.icon">
+    <link rel="canonical" href="https://schwarz-bunt-seiten-berlin.org/">
+
     <meta name="viewport" content="width=device-width,initial-scale=1">
-</head>
-<body>
-    <img src="static/header.png" alt="header"/>
-    <div class="w3-container">
-      {% block content %} {% endblock %}
-    </div>
-</body>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta name="Title" content="Schwarz-Bunte-Seiten Berlin">
+    <meta name="Description" content="Linksradikale, anarchistische und emanzipatorische Adressen, Gruppen und Orte in Berlin">
+    <meta name="Robots" content="INDEX,FOLLOW">
+    <meta name="Revisit" content="After 15 days">
+    <meta name="Keywords" content="Berlin, anarchistisch, emanzipatorisch, linksradikal, libertär, Gruppen, Orte, Medien, anarchy, anarchism, anarchist, emanzipatory, groups, locations, media">
+    <meta name="content-language" content="de,en">
+    <meta property="og:url" content="https://transform-social.org/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Schwarz-Bunte-Seiten Berlin">
+    <meta property="og:description" content="Linksradikale, anarchistische und emanzipatorische Adressen, Gruppen und Orte in Berlin">
+    <meta property="og:image" content="https://23.schwarz-bunte-seiten-berlin.org/static/header.png">
+  </head>
+  <body onLoad="if (self != top) top.location = self.location">
+    <a name="top" />
+      <a href="{{url_for('index', lang=lang)}}">
+        <img class="header" src="static/header.png" alt="header banner saying Schwarz-Bunte-Seiten"/>
+      </a>
+      <div class="w3-container">
+        {% block content %} {% endblock %}
+        <div class="w3-row bottom">
+          <a href="#top">{{L['base']['to_top_link']}}</>
+            <a class="imprint" href="{{url_for('imprint', lang=lang)}}">{{L['base']['imprint_link']}}</a>
+        </div>
+      </div>
+  </body>
 </html>
