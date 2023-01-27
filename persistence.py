@@ -5,7 +5,7 @@ class DBContact:
     LANG_COLUMNS = [
         'name', 'short_description', 'description', 'resources', 'base_address', 'addresses', 'contact'
     ]
-    OTHER_COLUMNS = ['email', 'geo_coord', 'image']
+    OTHER_COLUMNS = ['geo_coord', 'image']
 
 
     def __init__(self, mysql, lang: str):

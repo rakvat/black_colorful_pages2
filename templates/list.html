@@ -1,80 +1,107 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="w3-row">
-  <form action="{{url_for('list', lang=lang)}}">
-    <div class="w3-third">
+<div class="w3-row controls">
+  <form class="controls-form" action="{{url_for('list', lang=lang)}}">
+    <div class="control-item">
+      <label for="group">{{L['list']['group_filter']}}:&nbsp;</label>
       <input
           id="group" class="w3-input" type="checkbox" name="group"
           {% if request.args.get('group') %}checked{% endif %}
       />
-      <label for="group">{{L['list']['group_filter']}}</label>
     </div>
-    <div class="w3-third">
+    <div class="control-item">
+      <label for="location">{{L['list']['location_filter']}}:&nbsp;</label>
       <input
           id="location" class="w3-input" type="checkbox" name="location"
           {% if request.args.get('location') %}checked{% endif %}
       />
-      <label for="location">{{L['list']['location_filter']}}</label>
     </div>
-    <div class="w3-third">
+    <div class="control-item">
+      <label for="media">{{L['list']['media_filter']}}:&nbsp;</label>
       <input
           id="media" class="w3-input" type="checkbox" name="media"
           {% if request.args.get('media') %}checked{% endif %}
       />
-      <label for="media">{{L['list']['media_filter']}}</label>
     </div>
-    <div class="w3-third">
+    <div class="control-item">
       <input
           id="query" class="w3-input" type="text" placeholder="{{L['list']['search_query_filter']}}" name="query"
           value="{{request.args.get('query') or ''}}"
       />
-      <label for="query">{{L['list']['search_query_filter']}}</label>
     </div>
-    <button class="w3-third w3-button w3-black" type="submit">{{L['list']['search_button']}}</button>
+    <button class="w3-button w3-black" type="submit">{{L['list']['search_button']}}</button>
   </form>
-  <a class="w3-third w3-button w3-black" href="{{url_for('list', lang=lang)}}">{{L['list']['reset_search_button']}}</a>
-  <span>{{contacts|length}} {{L['list']['num_structures_label']}}</span>
-  <a href="{{ url_for('list', lang='de')}}">de</a> | <a href="{{ url_for('list', lang='en')}}">en</a>
+  <a class="w3-button w3-black none" href="{{url_for('list', lang=lang)}}">{{L['list']['reset_search_button']}}</a>
+  <div class="control-item count"><span>{{contacts|length}} {{L['list']['num_structures_label']}}</span></div>
+  <div class="control-item">
+    <a href="{{ url_for('list', lang='de')}}">de</a>&nbsp;|&nbsp;<a href="{{ url_for('list', lang='en')}}">en</a>
+  </div>
 </div>
+
 {% for contact in contacts %}
-<div class="w3-row">
-  <h3>{{contact.name}}</h3>
-  <div class="w3-third">
-    <h4>{{L['list']['description_header']}}</h4>
-    {{contact.short_description}}
-    {{contact.description}}
-    <h4>{{L['list']['resources_header']}}</h4>
-  </div>
-  <div class="w3-third">
-    <h4>{{L['list']['addresses_header']}}</h4>
-    {{contact.base_address}}
-    {{contact.addresses}}
-  </div>
-  <div class="w3-third">
-    <h4>{{L['list']['contact_header']}}</h4>
+<div class="w3-row contact">
+  <h3 class="contact-title">{{contact.name}}</h3>
+
+  <div class="preview">
+    <div class="w3-twothird preview-first">
+      {{contact.short_description}} &mdash; {{contact.description}}
+    </div>
+    <div class="w3-third preview-last">
+      <div>{{contact.base_address}}</div>
+      <button class="expand-button">
+        <img src="static/down.png" alt="expand preview icon">
+      </button>
+    </div>
   </div>
 
-  <!--div class="w3-third">
-    {% if contact.image %}
-    <img src="static/contact_images/{{contact.image}}" alt="logo or image of {{contact.name}}" />
-    {% endif %}
-    <h4>Beschreibung</h4>
-    {{contact.description}}
-    <h4>Ressourcen</h4>
-    {{contact.resources}}
+  <div class="full-view">
+    <div class="w3-third full-first">
+      {% if contact.image %}
+        <img src="static/contact_images/{{contact.image}}" alt="logo or image of {{contact.name}}" />
+      {% endif %}
+      <h4>{{L['list']['description_header']}}</h4>
+      {{contact.description | replace('\n', '<br/>' | safe)}}
+      <h4>{{L['list']['resources_header']}}</h4>
+      {{contact.resources | replace('\n', '<br/>' | safe)}}
+      </div>
+      <div class="w3-third full-second">
+      <h4>{{L['list']['addresses_header']}}</h4>
+      {{contact.addresses | urlize |  replace('\n', '<br/>' | safe)}}
+      <h4>{{L['list']['contact_header']}}</h4>
+      {{contact.contact |  replace('\n', '<br/>' | safe)}}
+      </div>
+      <div class="w3-third full-last">
+        <button class="collapse-button">
+          <img src="static/up.png" alt="collapse full-view icon">
+        </button>
+        <div class="map" data-marker="{{contact.geo_marker}}" data-bbox="{{contact.geo_bbox}}"></div>
     </div>
-    <div class="w3-third">
-    <h4>Addressen</h4>
-    {{contact.addresses}}
-    <h4>Kontakt</h4>
-    {{contact.contact}}
+  </div>
+</div>
+{% endfor %}
 
-    {{contact.email}}
-    </div>
-    <div class="w3-third">
-    {{contact.geo_coords}}
-    </div-->
-    </div>
-    {% endfor %}
-    {% endblock %}
+<script type="text/javascript">
+  const previews = document.querySelectorAll(".preview")
+  const fullViews = document.querySelectorAll(".full-view")
+  const expandButtons = document.querySelectorAll(".expand-button")
+  const collapseButtons = document.querySelectorAll(".collapse-button")
+  for(let i = 0; i < expandButtons.length; i++) {
+      expandButtons[i].addEventListener('click', (event) => {
+          previews[i].style.display="none";
+          fullViews[i].style.display="block";
+          const mapDiv = event.currentTarget.closest(".contact").querySelector(".map")
+          if (mapDiv.dataset.marker && !mapDiv.hasChildNodes()) {
+              const { marker, bbox } = mapDiv.dataset;
+              mapDiv.innerHTML = "<iframe width='350' height='350' frameborder='0' scrolling='no' marginheight='0' marginwidth='0' src='https://www.openstreetmap.org/export/embed.html?bbox="+bbox+"&layer=mapnik&marker="+marker+"&style='border: 1px solid black'></iframe>";
+          }
+      })
+  }
+  for(let i = 0; i < collapseButtons.length; i++) {
+      collapseButtons[i].addEventListener('click', () => {
+          previews[i].style.display="block";
+          fullViews[i].style.display="none";
+      })
+  }
+</script>
+{% endblock %}

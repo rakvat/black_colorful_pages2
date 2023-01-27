@@ -24,15 +24,21 @@
   </head>
   <body onLoad="if (self != top) top.location = self.location">
     <a name="top" />
+    <div class="w3-container container">
       <a href="{{url_for('index', lang=lang)}}">
         <img class="header" src="static/header.png" alt="header banner saying Schwarz-Bunte-Seiten"/>
       </a>
-      <div class="w3-container">
+      <div class="content">
         {% block content %} {% endblock %}
-        <div class="w3-row bottom">
-          <a href="#top">{{L['base']['to_top_link']}}</>
-            <a class="imprint" href="{{url_for('imprint', lang=lang)}}">{{L['base']['imprint_link']}}</a>
+      </div>
+      <div class="w3-row bottom">
+        <div class="bottom-button">
+          <a href="#top"><img src="static/up.png"/> {{L['base']['to_top_link']}}</>
+        </div>
+        <div class="bottom-button">
+          <a class="imprint" href="{{url_for('imprint', lang=lang)}}">{{L['base']['imprint_link']}}</a>
         </div>
       </div>
+    </div>
   </body>
 </html>
