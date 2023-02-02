@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Organize</h1>
+<div class="w3-row controls">
+  <form class="controls-form" action="{{url_for('organize')}}">
+    <div class="control-item">
+      <label for="group">{{L['list']['group_filter']}}:&nbsp;</label>
+      <input
+          id="group" class="w3-input" type="checkbox" name="group"
+          {% if request.args.get('group') %}checked{% endif %}
+      />
+    </div>
+    <div class="control-item">
+      <label for="location">{{L['list']['location_filter']}}:&nbsp;</label>
+      <input
+          id="location" class="w3-input" type="checkbox" name="location"
+          {% if request.args.get('location') %}checked{% endif %}
+      />
+    </div>
+    <div class="control-item">
+      <label for="media">{{L['list']['media_filter']}}:&nbsp;</label>
+      <input
+          id="media" class="w3-input" type="checkbox" name="media"
+          {% if request.args.get('media') %}checked{% endif %}
+      />
+    </div>
+    <div class="control-item">
+      <input
+          id="query" class="w3-input" type="text" placeholder="{{L['list']['search_query_filter']}}" name="query"
+          value="{{request.args.get('query') or ''}}"
+      />
+    </div>
+    <button class="w3-button w3-black" type="submit">{{L['list']['search_button']}}</button>
+  </form>
+  <a class="w3-button w3-black none" href="{{url_for('organize')}}">{{L['list']['reset_search_button']}}</a>
+  <div class="control-item count"><span>{{contacts|length}} {{L['list']['num_structures_label']}}</span></div>
+  <div class="control-item">
+  </div>
+</div>
+
+{% for contact in contacts %}
+<div class="w3-row contact">
+  <h3 class="contact-title">{{contact.name}}</h3>
+
+  <div class="full-view">
+    <div class="w3-third full-first">
+      {% if contact.image %}
+        <img src="static/contact_images/{{contact.image}}" alt="logo or image of {{contact.name}}" />
+      {% endif %}
+      <h4>{{L['list']['description_header']}}</h4>
+      {{contact.description}}
+      <h4>{{L['list']['resources_header']}}</h4>
+      {{contact.resources}}
+      </div>
+      <div class="w3-third full-second">
+      <h4>{{L['list']['addresses_header']}}</h4>
+      {{contact.addresses}}
+      <h4>{{L['list']['contact_header']}}</h4>
+      {{contact.contact}}
+      </div>
+      <div class="w3-third full-last">
+        <button class="collapse-button">
+          <img src="static/up.png" alt="collapse full-view icon">
+        </button>
+        <div class="map" data-marker="{{contact.geo_marker}}" data-bbox="{{contact.geo_bbox}}"></div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,7 +1,10 @@
-import dependencies # sets sys path for packages
-import json
+import dependencies # sets sys path for packages (has to be the first line)
 
-from flask import Flask,render_template, request
+import json
+from functools import wraps
+import bcrypt
+
+from flask import Flask,render_template, request, Response
 from flask_mysqldb import MySQL
 
 from persistence import DBContact
@@ -10,6 +13,25 @@ from model import Filter
 app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
 mysql = MySQL(app)
+
+def auth_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if auth and auth.username == app.config['ORGANIZE_LOGIN']:
+            hashed = app.config['ORGANIZE_PASSWORD'].encode('utf-8')
+            entered = auth.password.encode('utf-8')
+            if bcrypt.checkpw(entered, hashed):
+                return f(*args, **kwargs)
+
+        return Response(
+                'Could not verify your access level for that URL.\n'
+                'You have to login with proper credentials',
+                401,
+                {'WWW-Authenticate': 'Basic realm="Login Required"'},
+            )
+
+    return decorated
 
 with open('l10n/structure.json', 'r', encoding='utf-8') as f:
     L = json.load(f)
@@ -34,3 +56,18 @@ def list():
 def imprint():
     lang = _get_lang()
     return render_template('imprint.html', lang=lang, L=L[lang])
+
+@app.route("/organize", methods=['GET', 'POST'])
+@auth_required
+def organize():
+    return render_template('organize.html', L=L['en'])
+
+@app.route("/organize/new", methods=['GET'])
+@auth_required
+def organize_new():
+    return render_template('organize_new.html')
+
+@app.route("/organize/<int:id>", methods=['DELETE', 'PUT'])
+@auth_required
+def organize_contact():
+    pass

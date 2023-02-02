@@ -5,6 +5,27 @@
 Python 3.8 (that's what the host supports, sorry).
 pip install -r requirements.in
 
+## Config File
+
+Create file `config.json` with the following content:
+
+```
+{
+    "MYSQL_HOST": "...",
+    "MYSQL_USER": "...",
+    "MYSQL_PASSWORD": "...",
+    "MYSQL_DB": "...",
+    "TABLE_NAME": "e.g. contacts_berlin",
+    "DEFAULT_LANG": "e.g. de",
+    "ORGANIZE_LOGIN": "e.g. admin",
+    "ORGANIZE_PASSWORD": "hashed password"
+}
+```
+
+Create the hashed password with
+`bcrypt.hashpw("your password here".encode('utf-8'), bcrypt.gensalt(10)).decode('utf-8')`
+
+
 ## Run
 
 flask --app app --debug run
