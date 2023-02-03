@@ -82,8 +82,7 @@ class DBContact:
             values = ",".join([
                 f"'{escape_for_sql(getattr(contact.texts[lang], column))}'" for lang in LANGUAGES
             ])
-            insert_query = f"INSERT INTO {self.table_name}_lang({columns}) VALUES ({values});"
-            cursor.execute(insert_query)
+            cursor.execute(f"INSERT INTO {self.table_name}_lang({columns}) VALUES ({values});")
             cursor.execute("select last_insert_id();")
             self.mysql.connection.commit()
             lang_ids[column] = [row[0] for row in cursor][0]
@@ -102,8 +101,7 @@ class DBContact:
             as_sql_bool(contact.published),
         ]);
         values = ",".join(map(str, raw_values))
-        query = f"INSERT INTO {self.table_name}({columns}) VALUES ({values});"
-        cursor.execute(query)
+        cursor.execute(f"INSERT INTO {self.table_name}({columns}) VALUES ({values});")
         self.mysql.connection.commit()
 
 

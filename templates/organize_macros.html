@@ -1,0 +1,17 @@
+{% macro organize_hints() -%}
+<h4>Hints</h4>
+<ul>
+  <li>The short description is only used in collapsed state.</li>
+  <li>Description should not repeat short description.</li>
+  <li>Resources is everything the contact provides from food, books, advice, media, locations to healthcare, information, and solidarity.</li>
+  <li>The base address is only shown in collapsed state. It should be the name of the rough neighborhood or a domain for entries without physical location.</li>
+  <li>Contact can contain all forms of contact forms the struture is ok with. @ in emails will be automatically replaced</li>
+  <li>Use \n to create linebreaks in description, resources, addresses, and contact.</li>
+  <li>Latitude, Longitude has to be in the format 12.3456;12.3456</li>
+  <li>The image is a filename. The file has to be uploaded by the admin.</li>
+  <li>The email field is only used for internal purposes. Add it to the contact field if it should be publicly visible</li>
+  <li>Group, Location, Media are boolean flags for filtering</li>
+  <li>State is an internal field for editor notes</li>
+  <li>Published is a flag marking entries which should be shown publicly</li>
+</ul>
+{% endmacro -%}
