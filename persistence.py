@@ -1,4 +1,4 @@
-from constants import LANGUAGES, LANG_COLUMNS, OTHER_COLUMNS, OTHER_COLUMNS_FULL
+from constants import LANGUAGES, LANG_COLUMNS, OTHER_COLUMNS, OTHER_COLUMNS_FULL, OTHER_COLUMNS_FULL_WITHOUT_ID
 from model import Contact, ContactForOrganize, Filter
 from typing import List, Optional
 
@@ -21,7 +21,7 @@ class DBContact:
         cursor = self.mysql.connection.cursor()
         cursor.execute(self._build_organize_query(filter))
 
-        contacts = [ContactForOrganize(*row) for row in cursor]
+        contacts = [ContactForOrganize.from_database_row(*row) for row in cursor]
 
         cursor.close()
         return contacts
@@ -50,12 +50,12 @@ class DBContact:
         return (
             f"""SELECT {lang_colums_select}, {other_colmuns_select}
             FROM {self.table_name} Main {join}
-            {self._get_filter_query(filter)}
+            {self._get_filter_query(filter, only_published=False)}
             ORDER BY name_en;"""
         )
 
     def _get_filter_query(self, filter: Filter, lang: Optional[str] = None, only_published: bool = True) -> str:
-        filter_items = ["WHERE published=TRUE"] if only_published else []
+        filter_items = ["published=TRUE"] if only_published else []
         if filter.is_group:
             filter_items.append("is_group=TRUE")
         if filter.is_location:
@@ -68,5 +68,47 @@ class DBContact:
                 [f"L{name}.{l} LIKE \"%{filter.query}%\"" for name in LANG_COLUMNS for l in languages]
             )
             filter_items.append(f"({like_query})")
+        if not filter_items:
+            return ""
 
-        return " AND ".join(filter_items)
+        return f"WHERE {' AND '.join(filter_items)}"
+
+    def create(self, contact: ContactForOrganize) -> None:
+        cursor = self.mysql.connection.cursor()
+        # insert language strings into lang table and get the ids
+        lang_ids = {}
+        for column in LANG_COLUMNS:
+            columns = ",".join(LANGUAGES)
+            values = ",".join([
+                f"'{escape_for_sql(getattr(contact.texts[lang], column))}'" for lang in LANGUAGES
+            ])
+            insert_query = f"INSERT INTO {self.table_name}_lang({columns}) VALUES ({values});"
+            cursor.execute(insert_query)
+            cursor.execute("select last_insert_id();")
+            self.mysql.connection.commit()
+            lang_ids[column] = [row[0] for row in cursor][0]
+
+        # insert into main table
+        columns = ",".join([*LANG_COLUMNS, *OTHER_COLUMNS_FULL_WITHOUT_ID])
+        raw_values = [lang_ids[column] for column in LANG_COLUMNS]
+        raw_values.extend([
+            f"'{escape_for_sql(contact.geo_coord)}'",
+            f"'{escape_for_sql(contact.image)}'",
+            as_sql_bool(contact.is_group),
+            as_sql_bool(contact.is_location),
+            as_sql_bool(contact.is_media),
+            f"'{escape_for_sql(contact.email)}'",
+            f"'{escape_for_sql(contact.state)}'",
+            as_sql_bool(contact.published),
+        ]);
+        values = ",".join(map(str, raw_values))
+        query = f"INSERT INTO {self.table_name}({columns}) VALUES ({values});"
+        cursor.execute(query)
+        self.mysql.connection.commit()
+
+
+def as_sql_bool(value: bool) -> str:
+    return "TRUE" if value else "FALSE"
+
+def escape_for_sql(value: str) -> str:
+    return value.replace("'", "\\'")

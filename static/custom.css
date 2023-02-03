@@ -154,4 +154,5 @@ a.none:hover, a.none:active {
 }
 .organize div {
   padding: 0px 5px;
+  overflow: hidden;
 }

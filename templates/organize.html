@@ -42,7 +42,7 @@
       <li>The short description is only used in collapsed state.</li>
       <li>Description should not repeat short description.</li>
       <li>Resources is everything the contact provides from food, books, advice, media, locations to healthcare, information, and solidarity.</li>
-      <li>The base address is only shown in collapsed state. It should be the name of the rough neighborhood or a domain for structures without physical location.</li>
+      <li>The base address is only shown in collapsed state. It should be the name of the rough neighborhood or a domain for entries without physical location.</li>
       <li>Contact can contain all forms of contact forms the struture is ok with. @ in emails will be automatically replaced</li>
       <li>Use \n to create linebreaks in description, resources, addresses, and contact.</li>
       <li>Latitude, Longitude has to be in the format 12.3456;12.3456</li>
@@ -52,7 +52,7 @@
       <li>State is an internal field for editor notes</li>
       <li>Published is a flag marking entries which should be shown publicly</li>
     </ul>
-    <a class="w3-button w3-green none" href="{{url_for('organize_new')}}">Create New Structure</a>
+    <a class="w3-button w3-green none" href="{{url_for('organize_new')}}">Create New Entry</a>
   </div>
 </div>
 
@@ -79,7 +79,7 @@
       <p><b>Group:</b> {{contact.is_group}}</p>
       <p><b>Location:</b> {{contact.is_location}}</p>
       <p><b>Media:</b> {{contact.is_media}}</p>
-      <p><b>State</b>: {{contact.state}}</p>
+      <p><b>State:</b> {{contact.state}}</p>
       <p><b>Published:</b> {{contact.published}}</p>
       <p><a class="w3-button w3-black none" href="{{url_for('organize_edit', id=contact.id)}}">Edit</a></p>
       <p><a class="w3-button w3-red none" href="{{url_for('organize_contact', id=contact.id)}}">Delete</a></p>

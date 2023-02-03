@@ -8,7 +8,7 @@ from flask import Flask,render_template, request, Response
 from flask_mysqldb import MySQL
 
 from persistence import DBContact
-from model import Filter
+from model import Filter, ContactForOrganize
 from constants import LANGUAGES
 
 app = Flask(__name__)
@@ -61,6 +61,9 @@ def imprint():
 @app.route("/organize", methods=['GET', 'POST'])
 @auth_required
 def organize():
+    if request.method == 'POST':
+        DBContact(mysql=mysql).create(ContactForOrganize.from_form_data(request.form))
+
     filter = Filter.from_request(request)
     contacts = DBContact(mysql=mysql).contacts_for_organize(filter=filter)
     return render_template('organize.html', contacts=contacts, languages=LANGUAGES, L=L['en'])
@@ -68,7 +71,7 @@ def organize():
 @app.route("/organize/new", methods=['GET'])
 @auth_required
 def organize_new():
-    return render_template('organize_new.html')
+    return render_template('organize_new.html', languages=LANGUAGES, L=L['en'])
 
 @app.route("/organize/<int:id>/edit", methods=['GET'])
 @auth_required

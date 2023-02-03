@@ -4,3 +4,4 @@ LANG_COLUMNS = [
 ]
 OTHER_COLUMNS = ['geo_coord', 'image']
 OTHER_COLUMNS_FULL = [*OTHER_COLUMNS, 'is_group', 'is_location', 'is_media', 'email', 'state', 'published', 'id']
+OTHER_COLUMNS_FULL_WITHOUT_ID = OTHER_COLUMNS_FULL[0:-1]

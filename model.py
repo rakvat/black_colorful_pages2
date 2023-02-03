@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Any, Optional
 
 from constants import LANGUAGES, LANG_COLUMNS
 
@@ -82,11 +82,12 @@ class ContactForOrganize:
     email: str
     state: str
     published: bool
-    id: int
+    id: Optional[int] = None
 
-    def __init__(self, *args) -> None:
+    @staticmethod
+    def from_database_row(*args) -> "ContactForOrganize":
         num_lang_columns = len(LANG_COLUMNS)
-        self.texts = {}
+        texts = {}
         for index, lang in enumerate(LANGUAGES):
             contact_texts = ContactTexts(
                 name = args[index * num_lang_columns + 0],
@@ -97,15 +98,47 @@ class ContactForOrganize:
                 addresses = args[index * num_lang_columns + 5],
                 contact = args[index * num_lang_columns + 6],
             )
-            self.texts[lang] = contact_texts
+            texts[lang] = contact_texts
         index_offset = num_lang_columns * len(LANGUAGES)
 
-        self.geo_coord = args[index_offset + 0]
-        self.image = args[index_offset + 1]
-        self.is_group = args[index_offset + 2]
-        self.is_location = args[index_offset + 3]
-        self.is_media = args[index_offset + 4]
-        self.email = args[index_offset + 5]
-        self.state = args[index_offset + 6]
-        self.published = args[index_offset + 7]
-        self.id = args[index_offset + 8]
+        return ContactForOrganize(
+            texts = texts,
+            geo_coord = args[index_offset + 0],
+            image = args[index_offset + 1],
+            is_group = args[index_offset + 2],
+            is_location = args[index_offset + 3],
+            is_media = args[index_offset + 4],
+            email = args[index_offset + 5],
+            state = args[index_offset + 6],
+            published = args[index_offset + 7],
+            id = args[index_offset + 8],
+        )
+
+    @staticmethod
+    def from_form_data(data: Dict[str, Any]) -> "ContactForOrganize":
+        texts = {}
+        for lang in LANGUAGES:
+            contact_texts = ContactTexts(
+                name = data.get(f"{lang}_name", ""),
+                short_description = data.get(f"{lang}_short_description", ""),
+                description = data.get(f"{lang}_description", ""),
+                resources = data.get(f"{lang}_resources", ""),
+                base_address = data.get(f"{lang}_base_address", ""),
+                addresses = data.get(f"{lang}_addresses", ""),
+                contact = data.get(f"{lang}_contact", ""),
+            )
+            texts[lang] = contact_texts
+
+        return ContactForOrganize(
+            texts = texts,
+            geo_coord = data.get("geo_coord", ""),
+            image = data.get("image", ""),
+            is_group = data.get("is_group", False),
+            is_location = data.get("is_location", False),
+            is_media = data.get("is_media", False),
+            email = data.get("email", ""),
+            state = data.get("state", ""),
+            published = data.get("published", False),
+        )
+
+

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Organize</h1>
+<div class="w3-row">
+  <h4>Hints</h4>
+  <ul>
+    <li>The short description is only used in collapsed state.</li>
+    <li>Description should not repeat short description.</li>
+    <li>Resources is everything the contact provides from food, books, advice, media, locations to healthcare, information, and solidarity.</li>
+    <li>The base address is only shown in collapsed state. It should be the name of the rough neighborhood or a domain for entries without physical location.</li>
+    <li>Contact can contain all forms of contact forms the struture is ok with. @ in emails will be automatically replaced</li>
+    <li>Use \n to create linebreaks in description, resources, addresses, and contact.</li>
+    <li>Latitude, Longitude has to be in the format 12.3456;12.3456</li>
+    <li>The image is a filename. The file has to be uploaded by the admin.</li>
+    <li>The email field is only used for internal purposes. Add it to the contact field if it should be publicly visible</li>
+    <li>Group, Location, Media are boolean flags for filtering</li>
+    <li>State is an internal field for editor notes</li>
+    <li>Published is a flag marking entries which should be shown publicly</li>
+  </ul>
+</div>
+
+<div class="w3-row organize">
+  <h4>Create new Entry</h4>
+  <form class="controls-form" method="post" action="{{url_for('organize')}}">
+    {% for lang in languages %}
+    <div class="w3-third">
+      <h4>{{lang}}</h4>
+      <p><label for="{{lang}}_name">Name:</label> <input name="{{lang}}_name" value="" class="w3-input" type="text" /></p>
+      <br/>
+      <p><label for="{{lang}}_short_description">Short Description:</label> <input name="{{lang}}_short_description" value="" class="w3-input" type="text" /></p>
+      <p><label for="{{lang}}_description">Description:</label> <textarea name="{{lang}}_description" rows="5" class="w3-input"></textarea></p>
+      <br/>
+      <p><label for="{{lang}}_resources">Resources:</label> <textarea name="{{lang}}_resources" rows="5" class="w3-input"></textarea></p>
+      <br/>
+      <p><label for="{{lang}}_base_address">Base Address:</label> <input name="{{lang}}_base_address" value="" class="w3-input" type="text" /></p>
+      <p><label for="{{lang}}_addresses">Addresses:</label> <textarea name="{{lang}}_addresses" rows="5" class="w3-input"></textarea></p>
+      <br/>
+      <p><label for="{{lang}}_contact">Contact:</label> <textarea name="{{lang}}_contact" rows="5" class="w3-input"></textarea></p>
+    </div>
+    {% endfor %}
+
+    <div class="w3-third">
+      <p><label for="geo_coord">Latitude, Longitude:</label> <input name="geo_coord" value="" placeholder="12.3456;12.3456" class="w3-input" type="text" /></p>
+      <p><label for="image">Image:</label> <input name="image" value="" placeholder="filename" class="w3-input" type="text" /></p>
+      <p><label for="email">Email:</label> <input name="email" value="" class="w3-input" type="email" /></p>
+      <br/>
+      <p><label for="is_group">Group:</label> <input name="is_group" class="w3-input" type="checkbox" /></p>
+      <p><label for="is_location">Location:</label> <input name="is_location" class="w3-input" type="checkbox" /></p>
+      <p><label for="is_media">Media:</label> <input name="is_media" class="w3-input" type="checkbox" /></p>
+      <br/>
+      <p><label for="state">State:</label> <textarea name="state" rows="5" class="w3-input" ></textarea></p>
+      <p><label for="published">Published:</label> <input name="published" class="w3-input" type="checkbox" /></p>
+      <br/>
+
+      <p><button class="w3-button w3-black" type="submit">Create</button></p>
+    </div>
+  </form>
+</div>
+{% endblock %}
