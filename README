@@ -25,6 +25,49 @@ Create file `config.json` with the following content:
 Create the hashed password with
 `bcrypt.hashpw("your password here".encode('utf-8'), bcrypt.gensalt(10)).decode('utf-8')`
 
+## MySQL Setup
+
+Administration e.g. with `mysql --host=localhost --user=myname --password=password mydb`.
+The access can be configured with config.json.
+
+Two tables are needed:
+
+```
+mysql> describe contacts_berlin;
++-------------------+-------------+------+-----+---------+----------------+
+| Field             | Type        | Null | Key | Default | Extra          |
++-------------------+-------------+------+-----+---------+----------------+
+| id                | int         | NO   | PRI | NULL    | auto_increment |
+| name              | text        | NO   |     | NULL    |                |
+| short_description | text        | YES  |     | NULL    |                |
+| description       | text        | YES  |     | NULL    |                |
+| resources         | text        | YES  |     | NULL    |                |
+| base_address      | text        | YES  |     | NULL    |                |
+| addresses         | text        | YES  |     | NULL    |                |
+| contact           | text        | YES  |     | NULL    |                |
+| is_group          | tinyint(1)  | YES  |     | NULL    |                |
+| is_location       | tinyint(1)  | YES  |     | NULL    |                |
+| is_media          | tinyint(1)  | YES  |     | NULL    |                |
+| email             | text        | YES  |     | NULL    |                |
+| geo_coord         | varchar(16) | YES  |     | NULL    |                |
+| image             | text        | YES  |     | NULL    |                |
+| state             | text        | NO   |     | NULL    |                |
+| published         | tinyint(1)  | NO   |     | 0       |                |
++-------------------+-------------+------+-----+---------+----------------+
+
+mysql> describe contacts_berlin_lang;
++-------+------+------+-----+---------+----------------+
+| Field | Type | Null | Key | Default | Extra          |
++-------+------+------+-----+---------+----------------+
+| id    | int  | NO   | PRI | NULL    | auto_increment |
+| de    | text | NO   |     | NULL    |                |
+| en    | text | NO   |     | NULL    |                |
++-------+------+------+-----+---------+----------------+
+```
+
+
+
+
 
 ## Run
 

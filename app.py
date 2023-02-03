@@ -9,6 +9,7 @@ from flask_mysqldb import MySQL
 
 from persistence import DBContact
 from model import Filter
+from constants import LANGUAGES
 
 app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
@@ -48,7 +49,7 @@ def index():
 def list():
     filter = Filter.from_request(request)
     lang = _get_lang()
-    contacts = DBContact(mysql=mysql, lang=lang).all_contacts(filter=filter)
+    contacts = DBContact(mysql=mysql).contacts(filter=filter, lang=lang)
 
     return render_template('list.html', contacts=contacts, lang=lang, L=L[lang])
 
@@ -60,12 +61,19 @@ def imprint():
 @app.route("/organize", methods=['GET', 'POST'])
 @auth_required
 def organize():
-    return render_template('organize.html', L=L['en'])
+    filter = Filter.from_request(request)
+    contacts = DBContact(mysql=mysql).contacts_for_organize(filter=filter)
+    return render_template('organize.html', contacts=contacts, languages=LANGUAGES, L=L['en'])
 
 @app.route("/organize/new", methods=['GET'])
 @auth_required
 def organize_new():
     return render_template('organize_new.html')
+
+@app.route("/organize/<int:id>/edit", methods=['GET'])
+@auth_required
+def organize_edit():
+    return render_template('organize_edit.html')
 
 @app.route("/organize/<int:id>", methods=['DELETE', 'PUT'])
 @auth_required

@@ -67,9 +67,9 @@
       </div>
       <div class="w3-third full-second">
       <h4>{{L['list']['addresses_header']}}</h4>
-      {{contact.addresses | urlize |  replace('\n', '<br/>' | safe)}}
+      {{contact.addresses | urlize(target='_blank') | replace('\n', '<br/>' | safe)}}
       <h4>{{L['list']['contact_header']}}</h4>
-      {{contact.contact |  replace('\n', '<br/>' | safe)}}
+      {{contact.contact | urlize(target='_blank') | replace('\n', '<br/>' | safe)}}
       </div>
       <div class="w3-third full-last">
         <button class="collapse-button">
