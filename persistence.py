@@ -67,8 +67,9 @@ class DBContact:
             filter_items.append("is_media=TRUE")
         if filter.query:
             languages = [lang] if lang else LANGUAGES
+            query = filter.query.replace('"', '\\"')
             like_query = " OR ".join(
-                [f"L{name}.{l} LIKE \"%{filter.query}%\"" for name in LANG_COLUMNS for l in languages]
+                [f"L{name}.{l} LIKE \"%{query}%\"" for name in LANG_COLUMNS for l in languages]
             )
             filter_items.append(f"({like_query})")
         if not filter_items:
@@ -143,7 +144,7 @@ class DBContact:
         cursor = self.mysql.connection.cursor()
         columns = ",".join(LANG_COLUMNS)
         cursor.execute(f"SELECT {columns} FROM {self.table_name} WHERE id={id};")
-        lang_ids = ",".join([row for row in cursor][0])
+        lang_ids = ",".join(map(str, [row for row in cursor][0]))
         cursor.execute(f"DELETE FROM {self.table_name}_lang WHERE id IN ({lang_ids});")
         cursor.execute(f"DELETE FROM {self.table_name} WHERE id={id};")
         self.mysql.connection.commit()
