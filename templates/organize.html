@@ -63,13 +63,28 @@
       <p><b>Latitude, Longitude:</b> {{contact.geo_coord}}</p>
       <p><b>Image:</b> {{contact.image}}</p>
       <p><b>Email:</b> {{contact.email}}</p>
-      <p><b>Group:</b> {{contact.is_group}}</p>
-      <p><b>Location:</b> {{contact.is_location}}</p>
-      <p><b>Media:</b> {{contact.is_media}}</p>
+      <p class="checkbox-in-list">
+        <b>Group: </b>
+        <input class="w3-input" type="checkbox" disabled {% if contact.is_group %}checked{% endif %}/>
+      </p>
+      <p class="checkbox-in-list">
+        <b>Location: </b>
+        <input class="w3-input" type="checkbox" disabled {% if contact.is_location %}checked{% endif %}/>
+      </p>
+      <p class="checkbox-in-list">
+        <b>Media: </b>
+        <input class="w3-input" type="checkbox" disabled {% if contact.is_media %}checked{% endif %}/>
+      </p>
       <p><b>State:</b> {{contact.state}}</p>
-      <p><b>Published:</b> {{contact.published}}</p>
+      <p class="checkbox-in-list">
+        <b>Published: </b>
+        <input class="w3-input" type="checkbox" disabled {% if contact.published %}checked{% endif %}/>
+      </p>
       <p><a class="w3-button w3-black none" href="{{url_for('organize_edit', id=contact.id)}}">Edit</a></p>
-      <p><a class="w3-button w3-red none" href="{{url_for('organize_contact', id=contact.id)}}">Delete</a></p>
+
+      <form class="controls-form" method="post" action="{{url_for('organize_contact_delete', id=contact.id)}}">
+        <p><button class="w3-button w3-red" type="submit" onclick="return confirm('Are you sure?')">Delete</button></p>
+      </form>
     </div>
   </div>
 </div>

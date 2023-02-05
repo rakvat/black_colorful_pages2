@@ -55,25 +55,31 @@ class Contact(ContactTexts):
 
 @dataclass
 class Filter:
-    is_group: bool
-    is_location: bool
-    is_media: bool
-    query: str
+    is_group: bool = False
+    is_location: bool = False
+    is_media: bool = False
+    query: str = ""
+    id: Optional[int] = None
 
     @staticmethod
     def from_request(request) -> "Filter":
         return Filter(
-            is_group = request.args.get('group') is not None,
-            is_location = request.args.get('location') is not None,
-            is_media = request.args.get('media') is not None,
-            query = request.args.get('query') or "",
+            is_group = request.args.get('group', False),
+            is_location = request.args.get('location', False),
+            is_media = request.args.get('media', False),
+            query = request.args.get('query', ''),
         )
+
+    @staticmethod
+    def for_id(id: int) -> "Filter":
+        return Filter(id = id)
 
 
 @dataclass
 class ContactForOrganize:
     texts: Dict[str, ContactTexts]
     """ mapping of language key to texts """
+
     geo_coord: str
     image: str
     is_group: bool
@@ -141,4 +147,29 @@ class ContactForOrganize:
             published = data.get("published", False),
         )
 
+    @staticmethod
+    def empty() -> "ContactForOrganize":
+        texts = {}
+        for lang in LANGUAGES:
+            contact_texts = ContactTexts(
+                name = "",
+                short_description = "",
+                description = "",
+                resources = "",
+                base_address = "",
+                addresses = "",
+                contact = "",
+            )
+            texts[lang] = contact_texts
 
+        return ContactForOrganize(
+            texts = texts,
+            geo_coord = "",
+            image = "",
+            is_group = False,
+            is_location = False,
+            is_media = False,
+            email = "",
+            state = "",
+            published = False,
+        )

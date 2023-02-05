@@ -4,7 +4,7 @@ import json
 from functools import wraps
 import bcrypt
 
-from flask import Flask,render_template, request, Response
+from flask import Flask,render_template, request, Response, url_for, redirect
 from flask_mysqldb import MySQL
 
 from persistence import DBContact
@@ -71,14 +71,26 @@ def organize():
 @app.route("/organize/new", methods=['GET'])
 @auth_required
 def organize_new():
-    return render_template('organize_new.html', languages=LANGUAGES, L=L['en'])
+    contact = ContactForOrganize.empty()
+    return render_template('organize_new.html', contact=contact, languages=LANGUAGES, L=L['en'])
 
 @app.route("/organize/<int:id>/edit", methods=['GET'])
 @auth_required
-def organize_edit():
-    return render_template('organize_edit.html')
+def organize_edit(id: int):
+    filter = Filter.for_id(id)
+    contacts = DBContact(mysql=mysql).contacts_for_organize(filter=filter)
+    return render_template('organize_edit.html', contact=contacts[0], languages=LANGUAGES, L=L['en'])
 
-@app.route("/organize/<int:id>", methods=['DELETE', 'PUT'])
+@app.route("/organize/<int:id>", methods=['DELETE', 'POST'])
 @auth_required
-def organize_contact():
-    pass
+def organize_contact(id: int):
+    if request.method == 'POST':  # REST PUT semantics, but restricted to form method options
+        DBContact(mysql=mysql).update(id, ContactForOrganize.from_form_data(request.form))
+    return redirect(url_for('organize'))
+
+@app.route("/organize/<int:id>/delete", methods=['POST'])
+@auth_required
+def organize_contact_delete(id: int):
+    if request.method == 'POST':  # REST DELETE semantics, but restricted to form method options
+        DBContact(mysql=mysql).delete(id)
+    return redirect(url_for('organize'))

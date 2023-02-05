@@ -156,3 +156,6 @@ a.none:hover, a.none:active {
   padding: 0px 5px;
   overflow: hidden;
 }
+.checkbox-in-list {
+  display: flex;
+}

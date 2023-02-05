@@ -6,7 +6,6 @@
   <li>Resources is everything the contact provides from food, books, advice, media, locations to healthcare, information, and solidarity.</li>
   <li>The base address is only shown in collapsed state. It should be the name of the rough neighborhood or a domain for entries without physical location.</li>
   <li>Contact can contain all forms of contact forms the struture is ok with. @ in emails will be automatically replaced</li>
-  <li>Use \n to create linebreaks in description, resources, addresses, and contact.</li>
   <li>Latitude, Longitude has to be in the format 12.3456;12.3456</li>
   <li>The image is a filename. The file has to be uploaded by the admin.</li>
   <li>The email field is only used for internal purposes. Add it to the contact field if it should be publicly visible</li>
@@ -14,4 +13,84 @@
   <li>State is an internal field for editor notes</li>
   <li>Published is a flag marking entries which should be shown publicly</li>
 </ul>
+{% endmacro -%}
+
+{% macro entry_form(contact, languages) -%}
+{% for lang in languages %}
+<div class="w3-third">
+  <h4>{{lang}}</h4>
+  <p>
+    <label for="{{lang}}_name">Name: </label>
+    <input name="{{lang}}_name" value="{{contact.texts[lang].name}}" class="w3-input" type="text" />
+  </p>
+  <br/>
+  <p>
+    <label for="{{lang}}_short_description">Short Description: </label>
+    <input name="{{lang}}_short_description" value="{{contact.texts[lang].short_description}}" class="w3-input" type="text" />
+  </p>
+  <p>
+    <label for="{{lang}}_description">Description: </label>
+    <textarea name="{{lang}}_description" rows="5" class="w3-input">{{contact.texts[lang].description}}</textarea>
+  </p>
+  <br/>
+  <p>
+    <label for="{{lang}}_resources">Resources: </label>
+    <textarea name="{{lang}}_resources" rows="5" class="w3-input">{{contact.texts[lang].resources}}</textarea>
+  </p>
+  <br/>
+  <p>
+    <label for="{{lang}}_base_address">Base Address: </label>
+    <input name="{{lang}}_base_address" value="{{contact.texts[lang].base_address}}" class="w3-input" type="text" />
+  </p>
+  <p>
+    <label for="{{lang}}_addresses">Addresses: </label>
+    <textarea name="{{lang}}_addresses" rows="5" class="w3-input">{{contact.texts[lang].addresses}}</textarea>
+  </p>
+  <br/>
+  <p>
+    <label for="{{lang}}_contact">Contact: </label>
+    <textarea name="{{lang}}_contact" rows="5" class="w3-input">{{contact.texts[lang].contact}}</textarea>
+  </p>
+</div>
+{% endfor %}
+
+<div class="w3-third">
+  <p>
+    <label for="geo_coord">Latitude, Longitude: </label>
+    <input name="geo_coord" value="{{contact.geo_coord}}" placeholder="12.3456;12.3456" class="w3-input" type="text" />
+  </p>
+  <p>
+    <label for="image">Image: </label>
+    <input name="image" value="{{contact.image}}" placeholder="filename" class="w3-input" type="text" />
+  </p>
+  <p>
+    <label for="email">Email: </label>
+    <input name="email" value="{{contact.email}}" class="w3-input" type="email" />
+  </p>
+  <br/>
+  <p class="checkbox-in-list">
+    <label for="is_group">Group: </label>
+    <input name="is_group" class="w3-input" type="checkbox" {% if contact.is_group %}checked{% endif %}/>
+  </p>
+  <p class="checkbox-in-list">
+    <label for="is_location">Location: </label>
+    <input name="is_location" class="w3-input" type="checkbox" {% if contact.is_location %}checked{% endif %}/>
+  </p>
+  <p class="checkbox-in-list">
+    <label for="is_media">Media: </label>
+    <input name="is_media" class="w3-input" type="checkbox" {% if contact.is_media %}checked{% endif %}/>
+  </p>
+  <br/>
+  <p>
+    <label for="state">State: </label>
+    <textarea name="state" rows="5" class="w3-input" >{{contact.state}}</textarea>
+  </p>
+  <br/>
+  <p class="checkbox-in-list">
+    <label for="published">Published: </label>
+    <input name="published" class="w3-input" type="checkbox" {% if contact.published %}checked{% endif %}/>
+  </p>
+  <br/>
+  <p><button class="w3-button w3-black" type="submit">Save</button></p>
+</div>
 {% endmacro -%}

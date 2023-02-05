@@ -8,8 +8,8 @@
 </div>
 
 <div class="w3-row organize">
-  <h4>Create new Entry</h4>
-  <form class="controls-form" method="post" action="{{url_for('organize')}}">
+  <h4>Edit Entry</h4>
+  <form class="controls-form" method="post" action="{{url_for('organize_contact', id=contact.id)}}">
     {{entry_form(contact, languages)}}
   </form>
 </div>
