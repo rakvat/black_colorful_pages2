@@ -38,7 +38,8 @@ with open('l10n/structure.json', 'r', encoding='utf-8') as f:
     L = json.load(f)
 
 def _get_lang():
-    return request.args.get('lang') or app.config['DEFAULT_LANG']
+    lang_pararameter = request.args.get('lang') or app.config['DEFAULT_LANG']
+    return lang_pararameter if lang_pararameter in LANGUAGES else app.config['DEFAULT_LANG']
 
 @app.route("/")
 def index():
