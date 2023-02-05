@@ -60,10 +60,9 @@
 <script type="text/javascript">
   const previews = document.querySelectorAll(".preview")
   const fullViews = document.querySelectorAll(".full-view")
-  const expandButtons = document.querySelectorAll(".expand-button")
   const collapseButtons = document.querySelectorAll(".collapse-button")
-  for(let i = 0; i < expandButtons.length; i++) {
-      expandButtons[i].addEventListener('click', (event) => {
+  for(let i = 0; i < previews.length; i++) {
+      previews[i].addEventListener('click', (event) => {
           previews[i].style.display="none";
           fullViews[i].style.display="block";
           const mapDiv = event.currentTarget.closest(".contact").querySelector(".map")
