@@ -1,10 +1,10 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: Verdana, sans-serif;
+  font-family: helvetica, sans-serif !important;
+  font-size: 16px;
   color: #000000;
   background-color: #dfdfdf;
-
 }
 
 a {
@@ -75,7 +75,7 @@ a.none:hover, a.none:active {
   justify-content: space-between;
   flex-flow: row wrap;
   border-bottom: 1px solid #b1161d;
-  padding-bottom: 2px;
+  padding-bottom: 8px;
 }
 .controls-form {
   display: flex;
@@ -86,8 +86,8 @@ a.none:hover, a.none:active {
 }
 .control-item {
   display: flex;
-  margin-top: auto;
-  margin-bottom: auto;
+  align-self: center;
+  margin: 2px;
 }
 .control-item.count {
   margin-left: 10px;

@@ -1,38 +1,14 @@
+{% from 'macros.html' import search_controls %}
 {% extends 'base.html' %}
 
 {% block content %}
 <div class="w3-row controls">
   <form class="controls-form" action="{{url_for('list', lang=lang)}}">
-    <div class="control-item">
-      <label for="group">{{L['list']['group_filter']}}:&nbsp;</label>
-      <input
-          id="group" class="w3-input" type="checkbox" name="group"
-          {% if request.args.get('group') %}checked{% endif %}
-      />
-    </div>
-    <div class="control-item">
-      <label for="location">{{L['list']['location_filter']}}:&nbsp;</label>
-      <input
-          id="location" class="w3-input" type="checkbox" name="location"
-          {% if request.args.get('location') %}checked{% endif %}
-      />
-    </div>
-    <div class="control-item">
-      <label for="media">{{L['list']['media_filter']}}:&nbsp;</label>
-      <input
-          id="media" class="w3-input" type="checkbox" name="media"
-          {% if request.args.get('media') %}checked{% endif %}
-      />
-    </div>
-    <div class="control-item">
-      <input
-          id="query" class="w3-input" type="text" placeholder="{{L['list']['search_query_filter']}}" name="query"
-          value="{{request.args.get('query') or ''}}"
-      />
-    </div>
-    <button class="w3-button w3-black" type="submit">{{L['list']['search_button']}}</button>
+    {{search_controls(L)}}
   </form>
-  <a class="w3-button w3-black none" href="{{url_for('list', lang=lang)}}">{{L['list']['reset_search_button']}}</a>
+  <div class="control-item">
+    <a class="w3-button w3-black none" href="{{url_for('list', lang=lang)}}">{{L['list']['reset_search_button']}}</a>
+  </div>
   <div class="control-item count"><span>{{contacts|length}} {{L['list']['num_structures_label']}}</span></div>
   <div class="control-item">
     <a href="{{ url_for('list', lang='de')}}">de</a>&nbsp;|&nbsp;<a href="{{ url_for('list', lang='en')}}">en</a>
