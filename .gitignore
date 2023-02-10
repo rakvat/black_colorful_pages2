@@ -5,3 +5,5 @@ dependencies.py
 static/contact_images
 static/imprint.png
 static/header.png
+backups
+.htaccess

@@ -16,6 +16,7 @@
   <div>
     {{organize_hints()}}
     <a class="w3-button w3-green none" href="{{url_for('organize_new')}}">Create New Entry</a>
+    <a class="w3-button w3-black none" href="{{url_for('organize', _external=True) | replace('://', '://log:out@')}}">Logout</a>
   </div>
 </div>
 
