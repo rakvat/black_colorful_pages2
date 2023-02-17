@@ -25,5 +25,5 @@ def build_l10n(d: Dict[str, Any], l_paths: Dict[str, Dict[str, Any]]) -> Optiona
 
 build_l10n(data, L)
 
-with open(f'l10n/structure.json', 'w', encoding='utf-8') as f:
-    json.dump(L, f, ensure_ascii=False, indent=2)
+with open(f'l10n/l.py', 'w', encoding='utf-8') as f:
+    f.write(f"L={L}")

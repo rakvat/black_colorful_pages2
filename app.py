@@ -10,6 +10,7 @@ from flask_mysqldb import MySQL
 from persistence import DBContact
 from model import Filter, ContactForOrganize
 from constants import LANGUAGES
+from l10n.l import L
 
 app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
@@ -33,9 +34,6 @@ def auth_required(f):
             )
 
     return decorated
-
-with open('l10n/structure.json', 'r', encoding='utf-8') as f:
-    L = json.load(f)
 
 def _get_lang():
     lang_pararameter = request.args.get('lang') or app.config['DEFAULT_LANG']
