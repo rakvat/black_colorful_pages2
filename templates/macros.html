@@ -1,4 +1,4 @@
-{% macro search_controls(L) -%}
+{% macro search_controls(L, lang) -%}
 <div class="control-item">
   <label for="group">{{L['list']['group_filter']}}:&nbsp;</label>
   <input
@@ -25,6 +25,7 @@
       id="query" class="w3-input" type="text" placeholder="{{L['list']['search_query_filter']}}" name="query"
       value="{{request.args.get('query') or ''}}"
   />
+  <input id="lang" type="hidden" name="lang" value="{{lang or ''}}" />
 </div>
 <div class="control-item">
   <button class="w3-button w3-black" type="submit">{{L['list']['search_button']}}</button>
