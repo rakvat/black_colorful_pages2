@@ -5,6 +5,10 @@
 Python 3.8 (that's what the host supports, sorry).
 pip install -r requirements.in
 
+## Run
+
+flask --app app --debug run
+
 ## Config File
 
 Create file `config.json` with the following content:
@@ -69,6 +73,3 @@ mysql> describe contacts_berlin_lang;
 
 
 
-## Run
-
-flask --app app --debug run

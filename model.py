@@ -40,7 +40,6 @@ class Contact(ContactTexts):
         self.contact = contact
         self.geo_coord = geo_coord
         self.image = image
-        self._prepare_for_html()
 
         if self.geo_coord:
             # set some fields needed for openstreetmap
@@ -48,9 +47,6 @@ class Contact(ContactTexts):
             latitude, longitude = float(split[0]), float(split[1])
             self.geo_marker = f"{latitude:.5f},{longitude:.5f}"
             self.geo_bbox = f"{longitude - BBOX_RADIUS:.5f},{latitude - BBOX_RADIUS:.5f},{longitude + BBOX_RADIUS:.5f},{latitude + BBOX_RADIUS:.5f}"
-
-    def _prepare_for_html(self) -> None:
-        self.contact = self.contact.replace('@', '-at-')
 
 
 @dataclass
