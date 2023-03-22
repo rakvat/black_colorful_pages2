@@ -62,9 +62,20 @@ a.none:hover, a.none:active {
   color: #000000;
   text-decoration:none;
 }
+
+.index h1{
+  font-size: 22px;
+}
+.index h2{
+  font-size: 20px;
+}
+.index h3{
+  font-size: 18px;
+}
 .index-link-row {
   display: flex;
   justify-content: space-between;
+  margin: 20px 0px 40px 0px;
 }
 .index-link-row-first {
   flex-grow: 1

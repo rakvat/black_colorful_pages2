@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="index">
+<h1>Linksradikale und Emanzipatorische Strukturen in Berlin</h1>
+
+<div class="w3-row index-link-row">
+  <div class="index-link-row-first">
+    zur <a class="w3-button w3-black none" href="{{url_for('list', lang=lang)}}">Liste</a>
+  </div>
+  <div>
+    <a href="{{ url_for('index', lang='de')}}">de</a> | <a href="{{ url_for('index', lang='en')}}">en</a>
+  </div>
+</div>
+
+<h2>Warum dieses Projekt?</h2>
+
+<p>
+Obwohl es unmöglich ist, die linksradikale und emanzipatorische Szene katalogisieren, wollen wir mit den Schwarz-Bunten-Seiten Berlin ein Kontenpunkt sein.
+</p>
+
+<ul>
+  <li>Du bist neu in der Gegend und willst Kontakte knüpfen?</li>
+  <li>Du willst dich in bestehende Projekte einbringen?</li>
+  <li>Du bist Teil eines Projekts und willst dich mit anderen vernetzen oder Ressourcen gemeinsam nutzen?</li>
+</ul>
+
+Dann schau in die <a href="{{url_for('list', lang=lang)}}">Schwarz-Bunten-Seiten</a>.
+
+<h2>Unterstützen</h2>
+
+<p>
+Wir sind von eurer Unterstützung abhängig, damit die Infos möglichst aktuell sind.
+Schreibt uns bitte an <a href="mailto:info-at-schwarz-bunte-seiten-berlin.org">info-at-schwarz-bunte-seiten-berlin.org</a>.
+Einzelne Informationen sind genauso willkommen wie regelmäßige Unterstützung.
+</p>
+
+
+<h2>Was ihr hier findet</h2>
+
+<ul>
+  <li>
+    Ihr sucht einen Raum für eine Veranstaltung?
+    <a href="{{url_for('list', lang=lang, query='H48')}}">Suche:</a>
+    Der Projektraum H48 in Neukölln hat Raum dafür.
+  </li>
+  <li>
+    Ihr sucht ein bestimmtes anarchistisches Buch, die Autor*in fällt euch aber nicht ein?
+    <a href="{{url_for('list', lang=lang, query='Bibliothek der Freien')}}">Suche:</a>
+    Die Bibliothek der Freien kann euch kompetent beraten.
+  </li>
+  <li>
+    Ihr möchtet eine politische Party machen, könnt selbst aber nicht kochen?
+    <a href="{{url_for('list', lang=lang, query='Food for Action')}}">Suche:</a>
+    Food for Action findet eure Idee vielleicht toll und erklärt sich bereit, die Koch-Action für euch zu übernehmen.
+  </li>
+</ul>
+
+<p>
+Kurz gefasst findet ihr hier eine möglichst vielseitige Sammlung, um viele verschiedene Strömungen zu integrieren – mit einem Fokus auf Strukturen, die für Neue interessant sind und eher auf Dauer angelegt sind. Dazu gehören unter Anderem: politische Gruppen, Projekte aus dem Bereich Antipädagogik (Kinderläden), Antifa/Antira, Queeres, künstlerische Ansätze, Bibliotheken, Küfas (Küchen für alle), Kollektive, Medienprojekte, Veranstaltungsorte, Infoshops, Jugendzentren, Verlage, Nachrichtenagenturen, Archive usw. usf.
+</p>
+
+<h2>Was ihr hier nicht findet</h2>
+
+<p>
+Es versteht sich von selbst (oder sollte es jedenfalls), dass wir hier keine Gruppen haben möchten, die rassistisches, sexistisches und antisemitisches Gedankentum oder andere Formen der Diskriminierung fördern.
+</p>
+
+<p>
+Weil für uns Emanzipation sowohl mit der Überwindung aktueller Ungerechtigkeiten, insbesondere des wirtschaftlichen und politischen Systems der sogenannten "sozialen Marktwirtschaft", als auch mit dem kritischen Hinterfragen eigener Ideen und Vorstellungen zu tun hat, haben wir bewusst auf zwei Arten von Gruppen und Projekten verzichtet:
+</p>
+
+<p>
+Zum einen sind das Gruppen, die von sich aus kein Interesse an einer grundlegenden Änderung der Gesellschaft haben bzw. deren Arbeit eine Festigung bestehender Verhältnisse bewirkt. Dazu zählen bspw. Parteien oder auch Wohlfahrtsorganisationen, die mit ihrer Arbeit dazu beitragen, dass die Menschen, statt sich aufzulehnen und sich für ihre eigenen Belange einzusetzen, sich einrichten, apathisch werden oder sinnlos einer sprichwörtlichen Möhre hinterherlaufen, die in Wirklichkeit nicht das Ziel hat, dass alle in der Gesellschaft endlich ein menschenwürdiges Leben führen können.
+</p>
+
+<p>
+Zum anderen sind das Gruppen, die Ideen und Regime hochhalten, die sich durch autoritäre und unterdrückerische Ideologien auszeichnen. Dazu zählen wir auch Staaten wie die Sowjetunion, Nordkorea oder Kuba.
+</p>
+
+
+<h2>Noch mehr Kontakte in Berlin</h2>
+
+<p>
+Es gibt ein paar ähnliche Projekte, die ebenfalls Listen von linken Strukturen in Berlin online zur Verfügung stellen.
+</p>
+
+<ul>
+  <li><a href="https://iniradar.org/" target="_blank">Iniradar</a> listet Initiativen der gegenseitigen Hilfe</li>
+  <li><a href="https://www.kollektiv-betriebe.org/" target="_blank">Kollektivbetriebe</a> gibt Einblick und Überblick zu den zahlreichen Kollektivbetrieben Berlins</li>
+  <li><a href="https://berlin-besetzt.de/" target="_blank">Berlin Besetzt</a> bietet mit einer Übersicht über historische und aktuelle Besetzungen sowie viel Bewegungsgeschichte</li>
+  <li><a href="https://stressfaktor.squat.net/projekte" target="_blank">Stressfaktor</a> hat eine Liste von Projekten, die was veranstalten</li>
+</ul>
+
+
+<h2>Über die Initiator*innen</h2>
+
+<p>
+  Diese Seite entstand 2011 in einer in der <a href="https://fda-ifa.org/" target="_blank">FdA</a> organisierten Projektgruppe. Sie wird zur Zeit von einer Einzelperson so gut wie möglich gepflegt. Unterstützung ist sehr gerne willkommen 🐱.
+</p>
+
+<h2>In einer anderen Stadt oder Region?</h2>
+
+<p>
+Falls ihr Lust habt, Schwarz-Bunte-Seiten für eine andere Region aufzusetzen und noch Fragen habt, nehmt gerne Kontakt mit uns auf. <a href="mailto:info-at-schwarz-bunte-seiten-berlin.org">info-at-schwarz-bunte-seiten-berlin.org</a>.
+</p>
+
+</div>
+{% endblock %}

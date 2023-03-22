@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="index">
+<h1>Radical Leftist and Emancipatory Structures in Berlin</h1>
+
+<div class="w3-row index-link-row">
+  <div class="index-link-row-first">
+    to the <a class="w3-button w3-black none" href="{{url_for('list', lang=lang)}}">List</a>
+  </div>
+  <div>
+    <a href="{{ url_for('index', lang='de')}}">de</a> | <a href="{{ url_for('index', lang='en')}}">en</a>
+  </div>
+</div>
+
+<h2>Why this Project?</h2>
+
+<p>
+Although it is impossible to catalog the radical left and emancipatory scene, the Schwarz-Bunten-Seiten Berlin want to be a contact hub.
+</p>
+
+<ul>
+  <li>You are new in the area and want to make contacts?</li>
+  <li>You want to get involved in existing projects?</li>
+  <li>You are part of a project and want to network with others or share resources?</li>
+</ul>
+
+Then check out the <a href="{{url_for('list', lang=lang)}}">Schwarz-Bunten-Seiten</a>.
+
+<h2>Support us</h2>
+
+<p>
+We depend on your support to keep the info as up-to-date as possible.
+Please write to us at
+<a href="mailto:info-at-schwarz-bunte-seiten-berlin.org">info-at-black-colored-pages-berlin.org</a>.
+Small bits of information are just as welcome as regular support.
+</p>
+
+<h2>What you will find here</h2>
+
+<ul>
+  <li>
+    Let’s say you need a space to organise an event.
+    <a href="{{url_for('list', lang=lang, query='H48')}}">Search:</a>
+    The project space H48 in Neukölln has one you could use.
+  </li>
+  <li>
+    Or if you are searching for a certain anarchist book but don’t remember who wrote it.
+    <a href="{{url_for('list', lang=lang, query='Bibliothek der Freien')}}">Search:</a>
+    You could contact the team from the library Bibliothek der Freien.
+  </li>
+  <li>
+    Or you want to organise a party for a political cause, but you’re no use at cooking.
+    <a href="{{url_for('list', lang=lang, query='Food for Action')}}">Search:</a>
+    Food for Action might like your idea and might agree do the cooking for you.
+  </li>
+</ul>
+
+<p>
+You will find a very broad set of links here. This way we hope to bring together a large number of political currents. Our focus will be on groups potentially interesting to people new in Berlin, that is, groups that are likely to be around for some time. These can be political groups, anti-education groups (Kinderläden), antifascist and antiracist groups, queer organisations, activist artists, libraries, popular kitchens (Küfas), collectives, media projects, spaces for events, infoshops, youth centres, editors, news agencies, archives and so on.
+</p>
+
+<h2>What you won't find here</h2>
+
+<p>
+We of course (as should be clear) do not feature groups that promote racist, sexist or anti-Semitic ideas or in any other way uphold ideas that discriminate against others on our website.
+</p>
+
+<p>
+We believe that only by overcoming the so-called “social market economy,” that is, the current unjust economic and political system, can emancipation be achieved. At the same time we must never forget to critically question our own ideas and beliefs. That is why we will exclude two further types of groups and projects.
+</p>
+
+<p>
+The first of these are groups either with no interest in fundamentally changing society, or whose work helps perpetuate the status quo. Among these we count political parties and welfare organisations. Their work stops people from rebelling and fighting for their needs and helps them accept the current state of affairs, leading to apathy, or chasing after a carrot, with nice slogans which in reality have nothing to do with everyone being able to live a life worthy of the name ‘human’.
+</p>
+
+<p>
+On the other hand we have also decided to exclude groups supportive of ideas and regimes with authoritarian and repressive ideologies. For us this also includes the former Soviet Union, North Korea and Cuba.
+</p>
+
+
+<h2>Even more Contacts in Berlin</h2>
+
+<p>
+There are a few similar projects that also provide lists of leftist structures in Berlin.
+</p>
+
+<ul>
+  <li><a href="https://iniradar.org/" target="_blank">Iniradar</a> lists initiatives of mutual aid</li>
+  <li><a href="https://www.kollektiv-betriebe.org/" target="_blank">Kollektivbetriebe</a> provides insight and an overview of Berlin's numerous collectives</li>
+  <li><a href="https://berlin-besetzt.de/" target="_blank">Berlin Besetzt</a> offers an overview of historical and current occupations as well as a lot of movement history</li>
+  <li><a href="https://stressfaktor.squat.net/projekte" target="_blank">Stressfaktor</a> has a list of projects that are organizing events</li>
+</ul>
+
+
+<h2>About the Initiators</h2>
+
+<p>
+This page was created in 2011 in a project group organized in the
+<a href="https://fda-ifa.org/" target="_blank">FdA</a>.
+It is currently maintained as best as possible by a single person. Support is very welcome 🐱.
+</p>
+
+<h2>In another City or Region?</h2>
+
+<p>
+If you feel like setting up Schwarz-Bunte pages for another region and still have questions, feel free to contact us at <a href="mailto:info-at-schwarz-bunte-seiten-berlin.org">info-at-schwarz-bunte-seiten-berlin.org</a>.
+</p>
+
+</div>
+{% endblock %}

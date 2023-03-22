@@ -42,7 +42,7 @@ def _get_lang():
 @app.route("/")
 def index():
     lang = _get_lang()
-    return render_template('index.html', lang=lang, L=L[lang])
+    return render_template(f'index_{lang}.html', lang=lang, L=L[lang])
 
 @app.route("/list")
 def list():
