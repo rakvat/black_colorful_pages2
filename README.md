@@ -1,5 +1,9 @@
 # Source code for Schwarz-Bunte-Seiten-Berlin
 
+This is the source code of https://schwarz-bunte-seiten-berlin.org
+
+While some texts in .html files are Berlin specific, it can easily but adapted for other cities or regions.
+
 ## Requirements
 
 Python 3.8 (that's what the host supports, sorry).
@@ -69,6 +73,12 @@ mysql> describe contacts_berlin_lang;
 +-------+------+------+-----+---------+----------------+
 ```
 
+
+## L10n
+
+* Edit `l10n/source.json`
+* run `python l10n_creation.py`
+* `l10n/l.py` gets updated which is imported in the code
 
 
 
