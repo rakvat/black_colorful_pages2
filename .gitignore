@@ -1,6 +1,6 @@
 __pycache__
 config.json
-config_strato.json
+config_provider.json
 dependencies.py
 static/contact_images
 static/imprint.png

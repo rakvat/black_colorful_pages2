@@ -1,8 +1,9 @@
 # Source code for Schwarz-Bunte-Seiten-Berlin
 
-This is the source code of https://schwarz-bunte-seiten-berlin.org
+This is the source code of https://schwarz-bunte-seiten-berlin.org.
 
-While some texts in .html files are Berlin specific, it can easily but adapted for other cities or regions.
+A super simple flask app using mysql.
+
 
 ## Requirements
 
@@ -73,13 +74,21 @@ mysql> describe contacts_berlin_lang;
 +-------+------+------+-----+---------+----------------+
 ```
 
-
 ## L10n
 
 * Edit `l10n/source.json`
 * run `python l10n_creation.py`
 * `l10n/l.py` gets updated which is imported in the code
 
+## Admin Interface
 
+* Can be accessed at `/organize`
+* The password is set in `config.json`
 
+## Customization
 
+Feel free to use the code for similar projects in your cities or regions.
+
+While some texts in .html files are Berlin specific and need to be adapted, the code itself is generic.
+
+You will also have to add custom images like `static/header.png`.
