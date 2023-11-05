@@ -29,7 +29,7 @@
       <h4>{{lang}}</h4>
       <p><b>Name:</b> {{contact.texts[lang].name}}</p>
       <p><b>Short Description:</b> {{contact.texts[lang].short_description}}</p>
-      <p><b>Description:</b> {{contact.texts[lang].description | replace('\n', '<br/>' | safe)}}</p>
+      <p><b>Description:</b> {{contact.texts[lang].description | urlize(target='_blank') | replace('\n', '<br/>' | safe)}}</p>
       <p><b>Resources:</b> {{contact.texts[lang].resources | replace('\n', '<br/>' | safe)}}</p>
       <p><b>Base Address:</b> {{contact.texts[lang].base_address}}</p>
       <p><b>Addresses:</b> {{contact.texts[lang].addresses | urlize(target='_blank') | replace('\n', '<br/>' | safe)}}</p>

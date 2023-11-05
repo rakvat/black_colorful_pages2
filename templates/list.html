@@ -38,7 +38,7 @@
       {% endif %}
       {{contact.short_description}}
       {% if contact.description %}<h4>{{L['list']['description_header']}}</h4>{% endif %}
-      {{contact.description | replace('\n', '<br/>' | safe)}}
+      {{contact.description | urlize(target='_blank') | replace('\n', '<br/>' | safe)}}
       {% if contact.resources %}<h4>{{L['list']['resources_header']}}</h4>{% endif %}
       {{contact.resources | replace('\n', '<br/>' | safe)}}
       </div>
