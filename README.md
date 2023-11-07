@@ -62,6 +62,7 @@ mysql> describe contacts_berlin;
 | image             | text        | YES  |     | NULL    |                |
 | state             | text        | NO   |     | NULL    |                |
 | published         | tinyint(1)  | NO   |     | 0       |                |
+| radar_group_id    | int         | YES  |     | NULL    |                |
 +-------------------+-------------+------+-----+---------+----------------+
 
 mysql> describe contacts_berlin_lang;

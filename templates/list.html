@@ -53,11 +53,13 @@
           <img src="static/up.png" alt="collapse full-view icon">
         </button>
         <div class="map" data-marker="{{contact.geo_marker}}" data-bbox="{{contact.geo_bbox}}"></div>
-    </div>
+        <div class="events" data-lang="{{lang}}" data-header="{{L['list']['events_header']}}" data-group-id="{{contact.radar_group_id if contact.radar_group_id else ''}}"></div>
+      </div>
   </div>
 </div>
 {% endfor %}
 
+<script src="{{url_for('static', filename='radar.js')}}"></script>
 <script type="text/javascript">
   const previews = document.querySelectorAll(".preview")
   const fullViews = document.querySelectorAll(".full-view")
@@ -70,6 +72,10 @@
           if (mapDiv.dataset.marker && !mapDiv.hasChildNodes()) {
               const { marker, bbox } = mapDiv.dataset;
               mapDiv.innerHTML = "<iframe width='350' height='350' frameborder='0' scrolling='no' marginheight='0' marginwidth='0' src='https://www.openstreetmap.org/export/embed.html?bbox="+bbox+"&layer=mapnik&marker="+marker+"&style='border: 1px solid black'></iframe>";
+          }
+          const eventsDiv = event.currentTarget.closest(".contact").querySelector(".events")
+          if (eventsDiv.dataset.groupId && !eventsDiv.hasChildNodes()) {
+              Radar(eventsDiv);
           }
       })
   }

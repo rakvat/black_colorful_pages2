@@ -53,6 +53,10 @@
     "contact_header": {
       "de": "Kontakt",
       "en": "Contact"
+    },
+    "events_header": {
+      "de": "Veranstaltungen",
+      "en": "Events"
     }
   },
   "imprint": {

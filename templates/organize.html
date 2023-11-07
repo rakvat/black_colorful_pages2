@@ -57,6 +57,12 @@
         <b>Published: </b>
         <input class="w3-input" type="checkbox" disabled {% if contact.published %}checked{% endif %}/>
       </p>
+      <p>
+        <b>Radar Group ID:</b>
+        {% if contact.radar_group_id %}
+          <a href="https://radar.squat.net/node/{{contact.radar_group_id}}" target="_blank">{{contact.radar_group_id}}</a>
+        {% endif %}
+      </p>
       <p><a class="w3-button w3-black none" href="{{url_for('organize_edit', id=contact.id)}}">Edit</a></p>
 
       <form class="controls-form" method="post" action="{{url_for('organize_contact_delete', id=contact.id)}}">

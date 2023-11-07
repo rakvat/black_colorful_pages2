@@ -19,6 +19,7 @@ class ContactTexts:
 class Contact(ContactTexts):
     geo_coord: str
     image: str
+    radar_group_id: Optional[int] = None
 
     def __init__(self,
         name: str,
@@ -30,6 +31,7 @@ class Contact(ContactTexts):
         contact: str,
         geo_coord: str,
         image: str,
+        radar_group_id: Optional[int],
     ) -> None:
         self.name = name
         self.short_description = short_description
@@ -40,6 +42,7 @@ class Contact(ContactTexts):
         self.contact = contact
         self.geo_coord = geo_coord
         self.image = image
+        self.radar_group_id = radar_group_id
 
         if self.geo_coord:
             # set some fields needed for openstreetmap
@@ -85,6 +88,7 @@ class ContactForOrganize:
     state: str
     published: bool
     id: Optional[int] = None
+    radar_group_id: Optional[int] = None
 
     @staticmethod
     def from_database_row(*args) -> "ContactForOrganize":
@@ -107,13 +111,14 @@ class ContactForOrganize:
             texts = texts,
             geo_coord = args[index_offset + 0],
             image = args[index_offset + 1],
-            is_group = args[index_offset + 2],
-            is_location = args[index_offset + 3],
-            is_media = args[index_offset + 4],
-            email = args[index_offset + 5],
-            state = args[index_offset + 6],
-            published = args[index_offset + 7],
-            id = args[index_offset + 8],
+            radar_group_id = args[index_offset + 2],
+            is_group = args[index_offset + 3],
+            is_location = args[index_offset + 4],
+            is_media = args[index_offset + 5],
+            email = args[index_offset + 6],
+            state = args[index_offset + 7],
+            published = args[index_offset + 8],
+            id = args[index_offset + 9],
         )
 
     @staticmethod
@@ -141,6 +146,7 @@ class ContactForOrganize:
             email = data.get("email", ""),
             state = data.get("state", ""),
             published = data.get("published", False),
+            radar_group_id = data.get("radar_group_id")
         )
 
     @staticmethod

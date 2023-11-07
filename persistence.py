@@ -103,6 +103,7 @@ class DBContact:
             f"'{escape_for_sql(contact.email)}'",
             f"'{escape_for_sql(contact.state)}'",
             as_sql_bool(contact.published),
+            contact.radar_group_id,
         ]);
         values = ",".join(map(str, raw_values))
         cursor.execute(f"INSERT INTO {self.table_name}({columns}) VALUES ({values});")
@@ -135,6 +136,7 @@ class DBContact:
             f"email='{escape_for_sql(contact.email)}'",
             f"state='{escape_for_sql(contact.state)}'",
             f"published={as_sql_bool(contact.published)}",
+            f"radar_group_id={contact.radar_group_id if contact.radar_group_id else 'NULL'}",
         ]);
         cursor.execute(f"UPDATE {self.table_name} SET {set_query} WHERE id={id};")
         self.mysql.connection.commit()
