@@ -18,7 +18,6 @@ class ContactTexts:
 @dataclass
 class Contact(ContactTexts):
     geo_coord: str
-    image: str
     radar_group_id: Optional[int] = None
 
     def __init__(self,
@@ -30,7 +29,6 @@ class Contact(ContactTexts):
         addresses: str,
         contact: str,
         geo_coord: str,
-        image: str,
         radar_group_id: Optional[int],
     ) -> None:
         self.name = name
@@ -41,7 +39,6 @@ class Contact(ContactTexts):
         self.addresses = addresses
         self.contact = contact
         self.geo_coord = geo_coord
-        self.image = image
         self.radar_group_id = radar_group_id
 
         if self.geo_coord:
@@ -80,7 +77,6 @@ class ContactForOrganize:
     """ mapping of language key to texts """
 
     geo_coord: str
-    image: str
     is_group: bool
     is_location: bool
     is_media: bool
@@ -110,15 +106,14 @@ class ContactForOrganize:
         return ContactForOrganize(
             texts = texts,
             geo_coord = args[index_offset + 0],
-            image = args[index_offset + 1],
-            radar_group_id = args[index_offset + 2],
-            is_group = args[index_offset + 3],
-            is_location = args[index_offset + 4],
-            is_media = args[index_offset + 5],
-            email = args[index_offset + 6],
-            state = args[index_offset + 7],
-            published = args[index_offset + 8],
-            id = args[index_offset + 9],
+            radar_group_id = args[index_offset + 1],
+            is_group = args[index_offset + 2],
+            is_location = args[index_offset + 3],
+            is_media = args[index_offset + 4],
+            email = args[index_offset + 5],
+            state = args[index_offset + 6],
+            published = args[index_offset + 7],
+            id = args[index_offset + 8],
         )
 
     @staticmethod
@@ -139,7 +134,6 @@ class ContactForOrganize:
         return ContactForOrganize(
             texts = texts,
             geo_coord = data.get("geo_coord", ""),
-            image = data.get("image", ""),
             is_group = data.get("is_group", False),
             is_location = data.get("is_location", False),
             is_media = data.get("is_media", False),
@@ -167,7 +161,6 @@ class ContactForOrganize:
         return ContactForOrganize(
             texts = texts,
             geo_coord = "",
-            image = "",
             is_group = False,
             is_location = False,
             is_media = False,

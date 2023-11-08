@@ -96,7 +96,6 @@ class DBContact:
         raw_values = [lang_ids[column] for column in LANG_COLUMNS]
         raw_values.extend([
             f"'{escape_for_sql(contact.geo_coord)}'",
-            f"'{escape_for_sql(contact.image)}'",
             contact.radar_group_id,
             as_sql_bool(contact.is_group),
             as_sql_bool(contact.is_location),
@@ -129,7 +128,6 @@ class DBContact:
         columns = ",".join([*LANG_COLUMNS, *OTHER_COLUMNS_FULL_WITHOUT_ID])
         set_query = ",".join([
             f"geo_coord='{escape_for_sql(contact.geo_coord)}'",
-            f"image='{escape_for_sql(contact.image)}'",
             f"is_group={as_sql_bool(contact.is_group)}",
             f"is_location={as_sql_bool(contact.is_location)}",
             f"is_media={as_sql_bool(contact.is_media)}",

@@ -33,9 +33,6 @@
 
   <div class="full-view">
     <div class="w3-third full-first">
-      {% if contact.image %}
-        <img src="static/contact_images/{{contact.image}}" alt="logo or image of {{contact.name}}" />
-      {% endif %}
       {{contact.short_description}}
       {% if contact.description %}<h4>{{L['list']['description_header']}}</h4>{% endif %}
       {{contact.description | urlize(target='_blank') | replace('\n', '<br/>' | safe)}}

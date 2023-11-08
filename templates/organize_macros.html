@@ -7,7 +7,6 @@
   <li>The base address is only shown in collapsed state. It should be the name of the rough neighborhood or a domain for entries without physical location.</li>
   <li>Contact can contain all forms of contact forms the struture is ok with. @ in emails will be automatically replaced</li>
   <li>Latitude, Longitude has to be in the format 12.3456;12.3456</li>
-  <li>The image is a filename. The file has to be uploaded by the admin.</li>
   <li>The email field is only used for internal purposes. Add it to the contact field if it should be publicly visible</li>
   <li>Group, Location, Media are boolean flags for filtering</li>
   <li>State is an internal field for editor notes</li>
@@ -58,10 +57,6 @@
   <p>
     <label for="geo_coord">Latitude, Longitude: </label>
     <input name="geo_coord" value="{{contact.geo_coord}}" placeholder="12.3456;12.3456" class="w3-input" type="text" />
-  </p>
-  <p>
-    <label for="image">Image: </label>
-    <input name="image" value="{{contact.image}}" placeholder="filename" class="w3-input" type="text" />
   </p>
   <p>
     <label for="email">Email: </label>
