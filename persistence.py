@@ -97,13 +97,13 @@ class DBContact:
         raw_values.extend([
             f"'{escape_for_sql(contact.geo_coord)}'",
             f"'{escape_for_sql(contact.image)}'",
+            contact.radar_group_id,
             as_sql_bool(contact.is_group),
             as_sql_bool(contact.is_location),
             as_sql_bool(contact.is_media),
             f"'{escape_for_sql(contact.email)}'",
             f"'{escape_for_sql(contact.state)}'",
             as_sql_bool(contact.published),
-            contact.radar_group_id,
         ]);
         values = ",".join(map(str, raw_values))
         cursor.execute(f"INSERT INTO {self.table_name}({columns}) VALUES ({values});")
