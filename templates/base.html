@@ -21,6 +21,10 @@
     <meta property="og:title" content="Schwarz-Bunte-Seiten Berlin">
     <meta property="og:description" content="Linksradikale, anarchistische und emanzipatorische Adressen, Gruppen und Orte in Berlin">
     <meta property="og:image" content="{{url_for('static', filename='header.png')}}">
+    <script>
+      /*to prevent Firefox FOUC, this must be here*/
+      let FF_FOUC_FIX;
+    </script>
   </head>
   <body onLoad="if (self != top) top.location = self.location">
     <a name="top" />
