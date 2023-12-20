@@ -105,6 +105,9 @@ a.none:hover, a.none:active {
   margin-right: 10px;
   flex-grow: 1;
 }
+.iconbutton {
+  border: 0px !important;
+}
 
 .contact {
   border-bottom: 1px solid #ccc;

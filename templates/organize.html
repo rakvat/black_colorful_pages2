@@ -8,9 +8,6 @@
   <form class="controls-form" action="{{url_for('organize')}}">
     {{search_controls(L)}}
   </form>
-  <div class="control-item">
-    <a class="w3-button w3-black none" href="{{url_for('organize')}}">{{L['list']['reset_search_button']}}</a>
-  </div>
   <div class="control-item count"><span>{{contacts|length}} {{L['list']['num_structures_label']}}</span></div>
   <br/>
   <div>

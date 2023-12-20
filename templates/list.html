@@ -6,9 +6,6 @@
   <form class="controls-form" action="{{url_for('list')}}">
     {{search_controls(L, lang)}}
   </form>
-  <div class="control-item">
-    <a class="w3-button w3-black none" href="{{url_for('list', lang=lang)}}">{{L['list']['reset_search_button']}}</a>
-  </div>
   <div class="control-item count"><span>{{contacts|length}} {{L['list']['num_structures_label']}}</span></div>
   <div class="control-item">
     {% if lang=='de' %}
@@ -29,9 +26,7 @@
     </div>
     <div class="w3-third preview-last">
       <div>{{contact.base_address}}</div>
-      <button class="expand-button">
-        <img src="static/down.png" alt="expand preview icon">
-      </button>
+      <button class="expand-button" aria-label="expand preview"><i class="fa fa-chevron-down"></i></button>
     </div>
   </div>
 
@@ -50,9 +45,7 @@
       {{contact.contact | urlize(target='_blank') | replace('@', '-at-' | safe) | replace('\n', '<br/>' | safe)}}
       </div>
       <div class="w3-third full-last">
-        <button class="collapse-button">
-          <img src="static/up.png" alt="collapse full-view icon">
-        </button>
+        <button class="collapse-button" aria-label="collapse full view"><i class="fa fa-chevron-up"></i></button>
         <div class="map" data-marker="{{contact.geo_marker}}" data-bbox="{{contact.geo_bbox}}"></div>
         <div class="events" data-lang="{{lang}}" data-header="{{L['list']['events_header']}}" data-group-id="{{contact.radar_group_id if contact.radar_group_id else ''}}"></div>
       </div>
