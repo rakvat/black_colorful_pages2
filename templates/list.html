@@ -11,7 +11,11 @@
   </div>
   <div class="control-item count"><span>{{contacts|length}} {{L['list']['num_structures_label']}}</span></div>
   <div class="control-item">
-    <a href="{{ url_for('list', lang='de')}}">de</a>&nbsp;|&nbsp;<a href="{{ url_for('list', lang='en')}}">en</a>
+    {% if lang=='de' %}
+      de&nbsp;|&nbsp;<a href="{{ url_for('list', lang='en')}}">en</a>
+    {% else %}
+      <a href="{{ url_for('list', lang='de')}}">de</a>&nbsp;|&nbsp;en
+    {% endif %}
   </div>
 </div>
 
