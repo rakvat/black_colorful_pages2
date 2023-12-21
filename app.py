@@ -93,3 +93,7 @@ def organize_contact_delete(id: int):
     if request.method == 'POST':  # REST DELETE semantics, but restricted to form method options
         DBContact(mysql=mysql).delete(id)
     return redirect(url_for('organize'))
+
+@app.route("/cache-events", methods=['GET'])
+def cache_events():
+    return "ok"
