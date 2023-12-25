@@ -1,16 +1,17 @@
 import dependencies # sets sys path for packages (has to be the first line)
 
-import json
-from functools import wraps
 import bcrypt
-
-from flask import Flask,render_template, request, Response, url_for, redirect
+from datetime import datetime, timedelta
+from flask import abort, Flask, render_template, request, Response, url_for, redirect
 from flask_mysqldb import MySQL
+from functools import wraps
+import json
 
-from persistence import DBContact
-from model import Filter, ContactForOrganize
 from constants import LANGUAGES
 from l10n.l import L
+from model import Filter, ContactForOrganize
+from persistence import DBContact
+from radar import Radar
 
 app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
@@ -20,29 +21,29 @@ def auth_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         auth = request.authorization
-        if auth and auth.username == app.config['ORGANIZE_LOGIN']:
-            hashed = app.config['ORGANIZE_PASSWORD'].encode('utf-8')
-            entered = auth.password.encode('utf-8')
+        if auth and auth.username == app.config["ORGANIZE_LOGIN"]:
+            hashed = app.config["ORGANIZE_PASSWORD"].encode("utf-8")
+            entered = auth.password.encode("utf-8")
             if bcrypt.checkpw(entered, hashed):
                 return f(*args, **kwargs)
 
         return Response(
-                'Could not verify your access level for that URL.\n'
-                'You have to login with proper credentials',
+                "Could not verify your access level for that URL.\n"
+                "You have to login with proper credentials",
                 401,
-                {'WWW-Authenticate': 'Basic realm="Login Required"'},
+                {"WWW-Authenticate": "Basic realm='Login Required'"},
             )
 
     return decorated
 
 def _get_lang():
-    lang_pararameter = request.args.get('lang') or app.config['DEFAULT_LANG']
-    return lang_pararameter if lang_pararameter in LANGUAGES else app.config['DEFAULT_LANG']
+    lang_pararameter = request.args.get("lang") or app.config["DEFAULT_LANG"]
+    return lang_pararameter if lang_pararameter in LANGUAGES else app.config["DEFAULT_LANG"]
 
 @app.route("/")
 def index():
     lang = _get_lang()
-    return render_template(f'index_{lang}.html', lang=lang, L=L[lang])
+    return render_template(f"index_{lang}.html", lang=lang, L=L[lang])
 
 @app.route("/list")
 def list():
@@ -50,50 +51,69 @@ def list():
     lang = _get_lang()
     contacts = DBContact(mysql=mysql).contacts(filter=filter, lang=lang)
 
-    return render_template('list.html', contacts=contacts, lang=lang, L=L[lang])
+    return render_template("list.html", contacts=contacts, lang=lang, L=L[lang])
 
 @app.route("/imprint")
 def imprint():
     lang = _get_lang()
-    return render_template('imprint.html', lang=lang, L=L[lang])
+    return render_template("imprint.html", lang=lang, L=L[lang])
 
-@app.route("/organize", methods=['GET', 'POST'])
+@app.route("/organize", methods=["GET", "POST"])
 @auth_required
 def organize():
-    if request.method == 'POST':
+    if request.method == "POST":
         DBContact(mysql=mysql).create(ContactForOrganize.from_form_data(request.form))
 
     filter = Filter.from_request(request)
     contacts = DBContact(mysql=mysql).contacts_for_organize(filter=filter)
-    return render_template('organize.html', contacts=contacts, languages=LANGUAGES, L=L['en'])
+    return render_template("organize.html", contacts=contacts, languages=LANGUAGES, L=L["en"])
 
-@app.route("/organize/new", methods=['GET'])
+@app.route("/organize/new", methods=["GET"])
 @auth_required
 def organize_new():
     contact = ContactForOrganize.empty()
-    return render_template('organize_new.html', contact=contact, languages=LANGUAGES, L=L['en'])
+    return render_template("organize_new.html", contact=contact, languages=LANGUAGES, L=L["en"])
 
-@app.route("/organize/<int:id>/edit", methods=['GET'])
+@app.route("/organize/<int:id>/edit", methods=["GET"])
 @auth_required
 def organize_edit(id: int):
     filter = Filter.for_id(id)
     contacts = DBContact(mysql=mysql).contacts_for_organize(filter=filter)
-    return render_template('organize_edit.html', contact=contacts[0], languages=LANGUAGES, L=L['en'])
+    return render_template("organize_edit.html", contact=contacts[0], languages=LANGUAGES, L=L["en"])
 
-@app.route("/organize/<int:id>", methods=['DELETE', 'POST'])
+@app.route("/organize/<int:id>", methods=["DELETE", "POST"])
 @auth_required
 def organize_contact(id: int):
-    if request.method == 'POST':  # REST PUT semantics, but restricted to form method options
+    if request.method == "POST":  # REST PUT semantics, but restricted to form method options
         DBContact(mysql=mysql).update(id, ContactForOrganize.from_form_data(request.form))
-    return redirect(url_for('organize'))
+    return redirect(url_for("organize"))
 
-@app.route("/organize/<int:id>/delete", methods=['POST'])
+@app.route("/organize/<int:id>/delete", methods=["POST"])
 @auth_required
 def organize_contact_delete(id: int):
-    if request.method == 'POST':  # REST DELETE semantics, but restricted to form method options
+    if request.method == "POST":  # REST DELETE semantics, but restricted to form method options
         DBContact(mysql=mysql).delete(id)
-    return redirect(url_for('organize'))
+    return redirect(url_for("organize"))
 
-@app.route("/cache-events", methods=['GET'])
+@app.route("/update-events", methods=["GET"])
+def update_events():
+    lang = _get_lang()
+    id = int(request.args.get("id", 0))
+    contacts = DBContact(mysql=mysql).contacts_for_organize(filter=Filter.for_id(id))
+    if len(contacts) == 0 or contacts[0].radar_group_id is None:
+        abort(404)
+    one_hour_ago = datetime.now() - timedelta(hours=1)
+    if contacts[0].events_cached_at and contacts[0].events_cached_at > one_hour_ago:
+        return {"status": 304}  # not modified
+    events_map = Radar(contacts[0].radar_group_id).get_events()
+    DBContact(mysql=mysql).update_events_cache(id, events_map)
+    return {"events": events_map[lang], "status": 200}
+
+@app.route("/cache-events", methods=["GET"])
 def cache_events():
-    return "ok"
+    contact_id, radar_group_id = DBContact(mysql=mysql).contact_to_event_cache()
+    if contact_id and radar_group_id:
+        events_map = Radar(radar_group_id).get_events()
+        DBContact(mysql=mysql).update_events_cache(contact_id, events_map)
+        return f"cached {contact_id}"
+    return "nothing to cache"

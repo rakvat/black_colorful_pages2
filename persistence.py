@@ -1,6 +1,7 @@
-from constants import LANGUAGES, LANG_COLUMNS, OTHER_COLUMNS, OTHER_COLUMNS_FULL, OTHER_COLUMNS_FULL_WITHOUT_ID
+from datetime import datetime, timedelta
+from constants import LANGUAGES, LANG_COLUMNS, OTHER_COLUMNS, OTHER_COLUMNS_FULL
 from model import Contact, ContactForOrganize, Filter
-from typing import List, Optional
+from typing import Dict, List, Optional, Union, Any, Tuple
 
 class DBContact:
 
@@ -27,13 +28,13 @@ class DBContact:
         return contacts
 
     def _build_query(self, filter: Filter, lang: str) -> str:
-        lang_colums_select = ", ".join([f"L{name}.{lang} AS {name}" for name in LANG_COLUMNS])
+        lang_columns_select = ", ".join([f"L{name}.{lang} AS {name}" for name in LANG_COLUMNS])
         other_colmuns_select = ", ".join(OTHER_COLUMNS)
         join = " ".join(
-            [f"JOIN {self.table_name}_lang L{name} ON L{name}.id = {name}" for name in LANG_COLUMNS]
+            [f"LEFT JOIN {self.table_name}_lang L{name} ON L{name}.id = {name}" for name in LANG_COLUMNS]
         )
         return (
-            f"""SELECT {lang_colums_select}, {other_colmuns_select}
+            f"""SELECT Main.id, {lang_columns_select}, {other_colmuns_select}
             FROM {self.table_name} Main {join}
             {self._get_filter_query(filter, lang, only_published=True)}
             ORDER BY name;"""
@@ -45,10 +46,10 @@ class DBContact:
         ])
         other_colmuns_select = ", ".join([f"Main.{column}" for column in OTHER_COLUMNS_FULL])
         join = " ".join(
-            [f"JOIN {self.table_name}_lang L{name} ON L{name}.id = {name}" for name in LANG_COLUMNS]
+            [f"LEFT JOIN {self.table_name}_lang L{name} ON L{name}.id = {name}" for name in LANG_COLUMNS]
         )
         return (
-            f"""SELECT {lang_colums_select}, {other_colmuns_select}
+            f"""SELECT Main.id, {lang_colums_select}, {other_colmuns_select}
             FROM {self.table_name} Main {join}
             {self._get_filter_query(filter, only_published=False)}
             ORDER BY name_en;"""
@@ -77,32 +78,37 @@ class DBContact:
 
         return f"WHERE {' AND '.join(filter_items)}"
 
+    def _insert_lang_row(self, cursor: Any, contact: ContactForOrganize, column: str, languages: str) -> Optional[int]:
+        values = [getattr(contact.texts[lang], column) or '' for lang in LANGUAGES]
+        if all(v == '' for v in values): # don't insert lang fields if all values are empty
+            return None
+        escaped_values = ",".join([
+            f"'{escape_for_sql(value)}'" for value in values
+        ])
+        cursor.execute(f"INSERT INTO {self.table_name}_lang({languages}) VALUES ({escaped_values});")
+        cursor.execute("select last_insert_id();")
+        self.mysql.connection.commit()
+        return [row[0] for row in cursor][0]
+
     def create(self, contact: ContactForOrganize) -> None:
         cursor = self.mysql.connection.cursor()
         # insert language strings into lang table and get the ids
-        lang_ids = {}
-        for column in LANG_COLUMNS:
-            columns = ",".join(LANGUAGES)
-            values = ",".join([
-                f"'{escape_for_sql(getattr(contact.texts[lang], column))}'" for lang in LANGUAGES
-            ])
-            cursor.execute(f"INSERT INTO {self.table_name}_lang({columns}) VALUES ({values});")
-            cursor.execute("select last_insert_id();")
-            self.mysql.connection.commit()
-            lang_ids[column] = [row[0] for row in cursor][0]
+        languages = ",".join(LANGUAGES)
+        lang_ids = {column: self._insert_lang_row(cursor, contact, column, languages) for column in LANG_COLUMNS}
 
         # insert into main table
-        columns = ",".join([*LANG_COLUMNS, *OTHER_COLUMNS_FULL_WITHOUT_ID])
-        raw_values = [lang_ids[column] for column in LANG_COLUMNS]
+        columns = ",".join([*LANG_COLUMNS, *OTHER_COLUMNS_FULL])
+        raw_values: List[Union[str, int, None]] = [lang_ids[column] or 'NULL' for column in LANG_COLUMNS]
         raw_values.extend([
             f"'{escape_for_sql(contact.geo_coord)}'",
-            contact.radar_group_id,
             as_sql_bool(contact.is_group),
             as_sql_bool(contact.is_location),
             as_sql_bool(contact.is_media),
             f"'{escape_for_sql(contact.email)}'",
             f"'{escape_for_sql(contact.state)}'",
             as_sql_bool(contact.published),
+            f"'{contact.radar_group_id}'"  if contact.radar_group_id else 'NULL',
+            'NULL',
         ]);
         values = ",".join(map(str, raw_values))
         cursor.execute(f"INSERT INTO {self.table_name}({columns}) VALUES ({values});")
@@ -111,22 +117,30 @@ class DBContact:
 
     def update(self, id: int, contact: ContactForOrganize) -> None:
         cursor = self.mysql.connection.cursor()
-        columns = ",".join(LANG_COLUMNS)
-        cursor.execute(f"SELECT {columns} FROM {self.table_name} WHERE id={id};")
-        lang_ids = [row for row in cursor][0]
+        lang_columns = ",".join(LANG_COLUMNS)
+        languages = ",".join(LANGUAGES)
+        cursor.execute(f"SELECT {lang_columns} FROM {self.table_name} WHERE id={id};")
+        contact_db_row = [row for row in cursor][0]
 
         # update language strings in lang table
         for index, column in enumerate(LANG_COLUMNS):
-            set_query = ",".join([
-                f"{lang}='{escape_for_sql(getattr(contact.texts[lang], column))}'" for lang in LANGUAGES
-            ])
-            cursor.execute(f"UPDATE {self.table_name}_lang SET {set_query} WHERE id={lang_ids[index]};")
+            lang_id = contact_db_row[index]
+            if not lang_id:
+                lang_id = self._insert_lang_row(cursor, contact, column, languages)
+                if lang_id is not None:
+                    cursor.execute(f"UPDATE {self.table_name} SET {column}={lang_id} WHERE id={id};")
+                    self.mysql.connection.commit()
+            else:
+                values = ",".join([
+                    f"{lang}='{escape_for_sql(getattr(contact.texts[lang], column))}'" for lang in LANGUAGES
+                ])
+                cursor.execute(f"UPDATE {self.table_name}_lang SET {values} WHERE id={lang_id};")
 
         self.mysql.connection.commit()
 
         # update main table
-        columns = ",".join([*LANG_COLUMNS, *OTHER_COLUMNS_FULL_WITHOUT_ID])
-        set_query = ",".join([
+        lang_columns = ",".join([*LANG_COLUMNS, *OTHER_COLUMNS_FULL])
+        values = ",".join([
             f"geo_coord='{escape_for_sql(contact.geo_coord)}'",
             f"is_group={as_sql_bool(contact.is_group)}",
             f"is_location={as_sql_bool(contact.is_location)}",
@@ -134,9 +148,10 @@ class DBContact:
             f"email='{escape_for_sql(contact.email)}'",
             f"state='{escape_for_sql(contact.state)}'",
             f"published={as_sql_bool(contact.published)}",
-            f"radar_group_id={contact.radar_group_id if contact.radar_group_id else 'NULL'}",
+            f"radar_group_id={contact.radar_group_id}" if contact.radar_group_id else "radar_group_id=NULL",
+            f"events_cached_at='{contact.events_cached_at.isoformat()}'" if contact.events_cached_at else "events_cached_at=NULL",
         ]);
-        cursor.execute(f"UPDATE {self.table_name} SET {set_query} WHERE id={id};")
+        cursor.execute(f"UPDATE {self.table_name} SET {values} WHERE id={id};")
         self.mysql.connection.commit()
         cursor.close()
 
@@ -144,12 +159,35 @@ class DBContact:
         cursor = self.mysql.connection.cursor()
         columns = ",".join(LANG_COLUMNS)
         cursor.execute(f"SELECT {columns} FROM {self.table_name} WHERE id={id};")
-        lang_ids = ",".join(map(str, [row for row in cursor][0]))
+        lang_ids = ",".join([str(lang_id) for lang_id in [row for row in cursor][0] if lang_id is not None])
         cursor.execute(f"DELETE FROM {self.table_name}_lang WHERE id IN ({lang_ids});")
         cursor.execute(f"DELETE FROM {self.table_name} WHERE id={id};")
         self.mysql.connection.commit()
         cursor.close()
 
+    def contact_to_event_cache(self) -> Tuple[Optional[int], Optional[int]]:
+        # returns the contact id and its radar_group_id of one contact for which the events where never cached or > 5 hours ago
+        five_hours_ago = (datetime.now() - timedelta(hours=5)).isoformat()
+        cursor = self.mysql.connection.cursor()
+        cursor.execute(
+            f"SELECT id, radar_group_id FROM {self.table_name} "
+            f"WHERE radar_group_id IS NOT NULL AND (events_cached_at IS NULL OR events_cached_at < '{five_hours_ago}') "
+            "LIMIT 1"
+        )
+
+        if cursor.rowcount == 0:
+            return (None, None)
+        contact_id, radar_group_id = [row for row in cursor][0]
+
+        cursor.close()
+        return contact_id, radar_group_id
+
+    def update_events_cache(self, contact_id: int, events_map: Dict[str, Optional[str]]) -> None:
+        contact = self.contacts_for_organize(Filter.for_id(contact_id))[0]
+        for lang in LANGUAGES:
+            contact.texts[lang].cached_events = events_map[lang]
+        contact.events_cached_at = datetime.now()
+        self.update(contact_id, contact)
 
 
 def as_sql_bool(value: bool) -> str:

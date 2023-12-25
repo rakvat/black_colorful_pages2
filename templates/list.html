@@ -47,19 +47,20 @@
       <div class="w3-third full-last">
         <button class="collapse-button" aria-label="collapse full view"><i class="fa fa-chevron-up"></i></button>
         <div class="map" data-marker="{{contact.geo_marker}}" data-bbox="{{contact.geo_bbox}}"></div>
-        <div class="events" data-lang="{{lang}}" data-header="{{L['list']['events_header']}}" data-group-id="{{contact.radar_group_id if contact.radar_group_id else ''}}"></div>
+        {% if contact.cached_events %}
+          <div class='events' data-update-url="{{ url_for('update_events', id=contact.id, lang=lang) }}">{{contact.cached_events | safe }}</div>
+        {% endif %}
       </div>
   </div>
 </div>
 {% endfor %}
 
-<script src="{{url_for('static', filename='radar.js')}}"></script>
 <script type="text/javascript">
   const previews = document.querySelectorAll(".preview")
   const fullViews = document.querySelectorAll(".full-view")
   const collapseButtons = document.querySelectorAll(".collapse-button")
   for(let i = 0; i < previews.length; i++) {
-      previews[i].addEventListener('click', (event) => {
+      previews[i].addEventListener("click", (event) => {
           previews[i].style.display="none";
           fullViews[i].style.display="block";
           const mapDiv = event.currentTarget.closest(".contact").querySelector(".map")
@@ -67,14 +68,23 @@
               const { marker, bbox } = mapDiv.dataset;
               mapDiv.innerHTML = "<iframe width='350' height='350' frameborder='0' scrolling='no' marginheight='0' marginwidth='0' src='https://www.openstreetmap.org/export/embed.html?bbox="+bbox+"&layer=mapnik&marker="+marker+"&style='border: 1px solid black'></iframe>";
           }
-          const eventsDiv = event.currentTarget.closest(".contact").querySelector(".events")
-          if (eventsDiv.dataset.groupId && !eventsDiv.hasChildNodes()) {
-              Radar(eventsDiv);
+          const eventsDiv = event.currentTarget.closest(".contact").querySelector(".events");
+          if (eventsDiv && !eventsDiv.dataset.hasFreshData) {
+              const xhr = new XMLHttpRequest();
+              xhr.open("GET", eventsDiv.dataset.updateUrl, true);
+              xhr.responseType = "json";
+              xhr.onload = () => {
+                if (xhr.status === 200 && xhr.response.status == 200) {
+                  eventsDiv.innerHTML = xhr.response.events;
+                }
+                eventsDiv.dataset.hasFreshData = true;
+              };
+              xhr.send();
           }
       })
   }
   for(let i = 0; i < collapseButtons.length; i++) {
-      collapseButtons[i].addEventListener('click', () => {
+      collapseButtons[i].addEventListener("click", () => {
           previews[i].style.display="block";
           fullViews[i].style.display="none";
       })

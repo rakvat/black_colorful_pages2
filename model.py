@@ -1,3 +1,4 @@
+from datetime import datetime
 from dataclasses import dataclass
 from typing import Dict, Any, Optional
 
@@ -8,38 +9,41 @@ BBOX_RADIUS = 0.002
 @dataclass
 class ContactTexts:
     name: str
-    short_description: str
-    description: str
-    resources: str
-    base_address: str
-    addresses: str
-    contact: str
+    short_description: Optional[str]
+    description: Optional[str]
+    resources: Optional[str]
+    base_address: Optional[str]
+    addresses: Optional[str]
+    contact: Optional[str]
+    cached_events: Optional[str]
 
 @dataclass
 class Contact(ContactTexts):
     geo_coord: str
-    radar_group_id: Optional[int] = None
+    id: Optional[int] = None
 
     def __init__(self,
+        id: int,
         name: str,
-        short_description: str,
-        description: str,
-        resources: str,
-        base_address: str,
-        addresses: str,
-        contact: str,
-        geo_coord: str,
-        radar_group_id: Optional[int],
+        short_description: Optional[str],
+        description: Optional[str],
+        resources: Optional[str],
+        base_address: Optional[str],
+        addresses: Optional[str],
+        contact: Optional[str],
+        cached_events: Optional[str],
+        geo_coord: Optional[str],
     ) -> None:
+        self.id = id
         self.name = name
-        self.short_description = short_description
-        self.description = description
-        self.resources = resources
-        self.base_address = base_address
-        self.addresses = addresses
-        self.contact = contact
-        self.geo_coord = geo_coord
-        self.radar_group_id = radar_group_id
+        self.short_description = short_description or ''
+        self.description = description or ''
+        self.resources = resources or ''
+        self.base_address = base_address or ''
+        self.addresses = addresses or ''
+        self.contact = contact or ''
+        self.cached_events = cached_events or ''
+        self.geo_coord = geo_coord or ''
 
         if self.geo_coord:
             # set some fields needed for openstreetmap
@@ -83,37 +87,41 @@ class ContactForOrganize:
     email: str
     state: str
     published: bool
-    id: Optional[int] = None
     radar_group_id: Optional[int] = None
+    events_cached_at: Optional[datetime] = None
+    id: Optional[int] = None
 
     @staticmethod
     def from_database_row(*args) -> "ContactForOrganize":
         num_lang_columns = len(LANG_COLUMNS)
         texts = {}
+        id = args[0]
         for index, lang in enumerate(LANGUAGES):
             contact_texts = ContactTexts(
-                name = args[index * num_lang_columns + 0],
-                short_description = args[index * num_lang_columns + 1],
-                description = args[index * num_lang_columns + 2],
-                resources = args[index * num_lang_columns + 3],
-                base_address = args[index * num_lang_columns + 4],
-                addresses = args[index * num_lang_columns + 5],
-                contact = args[index * num_lang_columns + 6],
+                name = args[index * num_lang_columns + 1],
+                short_description = args[index * num_lang_columns + 2] or '',
+                description = args[index * num_lang_columns + 3] or '',
+                resources = args[index * num_lang_columns + 4] or '',
+                base_address = args[index * num_lang_columns + 5] or '',
+                addresses = args[index * num_lang_columns + 6] or '',
+                contact = args[index * num_lang_columns + 7] or '',
+                cached_events = args[index * num_lang_columns + 8] or '',
             )
             texts[lang] = contact_texts
-        index_offset = num_lang_columns * len(LANGUAGES)
+        index_offset = 1 + num_lang_columns * len(LANGUAGES)
 
         return ContactForOrganize(
+            id = id,
             texts = texts,
             geo_coord = args[index_offset + 0],
-            radar_group_id = args[index_offset + 1],
-            is_group = args[index_offset + 2],
-            is_location = args[index_offset + 3],
-            is_media = args[index_offset + 4],
-            email = args[index_offset + 5],
-            state = args[index_offset + 6],
-            published = args[index_offset + 7],
-            id = args[index_offset + 8],
+            is_group = args[index_offset + 1],
+            is_location = args[index_offset + 2],
+            is_media = args[index_offset + 3],
+            email = args[index_offset + 4],
+            state = args[index_offset + 5],
+            published = args[index_offset + 6],
+            radar_group_id = args[index_offset + 7],
+            events_cached_at = args[index_offset + 8],
         )
 
     @staticmethod
@@ -128,6 +136,7 @@ class ContactForOrganize:
                 base_address = data.get(f"{lang}_base_address", ""),
                 addresses = data.get(f"{lang}_addresses", ""),
                 contact = data.get(f"{lang}_contact", ""),
+                cached_events = "",
             )
             texts[lang] = contact_texts
 
@@ -140,7 +149,7 @@ class ContactForOrganize:
             email = data.get("email", ""),
             state = data.get("state", ""),
             published = data.get("published", False),
-            radar_group_id = data.get("radar_group_id")
+            radar_group_id = data.get("radar_group_id"),
         )
 
     @staticmethod
@@ -155,6 +164,7 @@ class ContactForOrganize:
                 base_address = "",
                 addresses = "",
                 contact = "",
+                cached_events = "",
             )
             texts[lang] = contact_texts
 

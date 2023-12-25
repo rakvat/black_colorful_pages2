@@ -7,7 +7,7 @@ A super simple flask app using mysql.
 
 ## Requirements
 
-Python 3.8 (that's what the host supports, sorry).
+Python 3.8
 pip install -r requirements.in
 
 ## Run
@@ -47,13 +47,13 @@ mysql> describe contacts_berlin;
 | Field             | Type        | Null | Key | Default | Extra          |
 +-------------------+-------------+------+-----+---------+----------------+
 | id                | int         | NO   | PRI | NULL    | auto_increment |
-| name              | text        | NO   |     | NULL    |                |
-| short_description | text        | YES  |     | NULL    |                |
-| description       | text        | YES  |     | NULL    |                |
-| resources         | text        | YES  |     | NULL    |                |
-| base_address      | text        | YES  |     | NULL    |                |
-| addresses         | text        | YES  |     | NULL    |                |
-| contact           | text        | YES  |     | NULL    |                |
+| name              | smallint    | NO   |     | NULL    |                |
+| short_description | smallint    | YES  |     | NULL    |                |
+| description       | smallint    | YES  |     | NULL    |                |
+| resources         | smallint    | YES  |     | NULL    |                |
+| base_address      | smallint    | YES  |     | NULL    |                |
+| addresses         | smallint    | YES  |     | NULL    |                |
+| contact           | smallint    | YES  |     | NULL    |                |
 | is_group          | tinyint(1)  | YES  |     | NULL    |                |
 | is_location       | tinyint(1)  | YES  |     | NULL    |                |
 | is_media          | tinyint(1)  | YES  |     | NULL    |                |
@@ -62,6 +62,8 @@ mysql> describe contacts_berlin;
 | state             | text        | NO   |     | NULL    |                |
 | published         | tinyint(1)  | NO   |     | 0       |                |
 | radar_group_id    | int         | YES  |     | NULL    |                |
+| cached_events     | smallint    | YES  |     | NULL    |                |
+| events_cached_at  | timestamp   | YES  |     | NULL    |                |
 +-------------------+-------------+------+-----+---------+----------------+
 
 mysql> describe contacts_berlin_lang;
