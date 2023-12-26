@@ -20,6 +20,7 @@ class ContactTexts:
 @dataclass
 class Contact(ContactTexts):
     geo_coord: str
+    radar_group_id: Optional[int] = None
     id: Optional[int] = None
 
     def __init__(self,
@@ -33,6 +34,7 @@ class Contact(ContactTexts):
         contact: Optional[str],
         cached_events: Optional[str],
         geo_coord: Optional[str],
+        radar_group_id: Optional[int],
     ) -> None:
         self.id = id
         self.name = name
@@ -44,6 +46,7 @@ class Contact(ContactTexts):
         self.contact = contact or ''
         self.cached_events = cached_events or ''
         self.geo_coord = geo_coord or ''
+        self.radar_group_id = radar_group_id
 
         if self.geo_coord:
             # set some fields needed for openstreetmap
@@ -114,13 +117,13 @@ class ContactForOrganize:
             id = id,
             texts = texts,
             geo_coord = args[index_offset + 0],
-            is_group = args[index_offset + 1],
-            is_location = args[index_offset + 2],
-            is_media = args[index_offset + 3],
-            email = args[index_offset + 4],
-            state = args[index_offset + 5],
-            published = args[index_offset + 6],
-            radar_group_id = args[index_offset + 7],
+            radar_group_id = args[index_offset + 1],
+            is_group = args[index_offset + 2],
+            is_location = args[index_offset + 3],
+            is_media = args[index_offset + 4],
+            email = args[index_offset + 5],
+            state = args[index_offset + 6],
+            published = args[index_offset + 7],
             events_cached_at = args[index_offset + 8],
         )
 

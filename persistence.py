@@ -101,13 +101,13 @@ class DBContact:
         raw_values: List[Union[str, int, None]] = [lang_ids[column] or 'NULL' for column in LANG_COLUMNS]
         raw_values.extend([
             f"'{escape_for_sql(contact.geo_coord)}'",
+            f"'{contact.radar_group_id}'"  if contact.radar_group_id else 'NULL',
             as_sql_bool(contact.is_group),
             as_sql_bool(contact.is_location),
             as_sql_bool(contact.is_media),
             f"'{escape_for_sql(contact.email)}'",
             f"'{escape_for_sql(contact.state)}'",
             as_sql_bool(contact.published),
-            f"'{contact.radar_group_id}'"  if contact.radar_group_id else 'NULL',
             'NULL',
         ]);
         values = ",".join(map(str, raw_values))
@@ -132,7 +132,7 @@ class DBContact:
                     self.mysql.connection.commit()
             else:
                 values = ",".join([
-                    f"{lang}='{escape_for_sql(getattr(contact.texts[lang], column))}'" for lang in LANGUAGES
+                    f"{lang}='{escape_for_sql(getattr(contact.texts[lang], column) or '')}'" for lang in LANGUAGES
                 ])
                 cursor.execute(f"UPDATE {self.table_name}_lang SET {values} WHERE id={lang_id};")
 
@@ -142,13 +142,13 @@ class DBContact:
         lang_columns = ",".join([*LANG_COLUMNS, *OTHER_COLUMNS_FULL])
         values = ",".join([
             f"geo_coord='{escape_for_sql(contact.geo_coord)}'",
+            f"radar_group_id={contact.radar_group_id}" if contact.radar_group_id else "radar_group_id=NULL",
             f"is_group={as_sql_bool(contact.is_group)}",
             f"is_location={as_sql_bool(contact.is_location)}",
             f"is_media={as_sql_bool(contact.is_media)}",
             f"email='{escape_for_sql(contact.email)}'",
             f"state='{escape_for_sql(contact.state)}'",
             f"published={as_sql_bool(contact.published)}",
-            f"radar_group_id={contact.radar_group_id}" if contact.radar_group_id else "radar_group_id=NULL",
             f"events_cached_at='{contact.events_cached_at.isoformat()}'" if contact.events_cached_at else "events_cached_at=NULL",
         ]);
         cursor.execute(f"UPDATE {self.table_name} SET {values} WHERE id={id};")
@@ -165,22 +165,22 @@ class DBContact:
         self.mysql.connection.commit()
         cursor.close()
 
-    def contact_to_event_cache(self) -> Tuple[Optional[int], Optional[int]]:
-        # returns the contact id and its radar_group_id of one contact for which the events where never cached or > 5 hours ago
+    def contact_to_event_cache(self, count: int) -> List[Tuple[int, int]]:
+        # returns the contact id and its radar_group_id of count contacts for which the events where never cached or > 5 hours ago
         five_hours_ago = (datetime.now() - timedelta(hours=5)).isoformat()
         cursor = self.mysql.connection.cursor()
         cursor.execute(
             f"SELECT id, radar_group_id FROM {self.table_name} "
             f"WHERE radar_group_id IS NOT NULL AND (events_cached_at IS NULL OR events_cached_at < '{five_hours_ago}') "
-            "LIMIT 1"
+            f"LIMIT {count}"
         )
 
         if cursor.rowcount == 0:
-            return (None, None)
-        contact_id, radar_group_id = [row for row in cursor][0]
+            return []
+        ids = [(contact_id, radar_group_id) for contact_id, radar_group_id in cursor]
 
         cursor.close()
-        return contact_id, radar_group_id
+        return ids
 
     def update_events_cache(self, contact_id: int, events_map: Dict[str, Optional[str]]) -> None:
         contact = self.contacts_for_organize(Filter.for_id(contact_id))[0]

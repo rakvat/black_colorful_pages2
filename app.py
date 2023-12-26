@@ -16,6 +16,7 @@ from radar import Radar
 app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
 mysql = MySQL(app)
+NUM_RADAR_IDS_TO_CACHE_PER_REQUEST = 5
 
 def auth_required(f):
     @wraps(f)
@@ -111,9 +112,10 @@ def update_events():
 
 @app.route("/cache-events", methods=["GET"])
 def cache_events():
-    contact_id, radar_group_id = DBContact(mysql=mysql).contact_to_event_cache()
-    if contact_id and radar_group_id:
+    contact_and_radar_ids = DBContact(mysql=mysql).contact_to_event_cache(count=NUM_RADAR_IDS_TO_CACHE_PER_REQUEST)
+    if not len(contact_and_radar_ids):
+        return "nothing to cache"
+    for contact_id, radar_group_id in contact_and_radar_ids:
         events_map = Radar(radar_group_id).get_events()
         DBContact(mysql=mysql).update_events_cache(contact_id, events_map)
-        return f"cached {contact_id}"
-    return "nothing to cache"
+    return f"cached {[contact_id for (contact_id, _) in contact_and_radar_ids]}"

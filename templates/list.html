@@ -47,7 +47,7 @@
       <div class="w3-third full-last">
         <button class="collapse-button" aria-label="collapse full view"><i class="fa fa-chevron-up"></i></button>
         <div class="map" data-marker="{{contact.geo_marker}}" data-bbox="{{contact.geo_bbox}}"></div>
-        {% if contact.cached_events %}
+        {% if contact.radar_group_id %}
           <div class='events' data-update-url="{{ url_for('update_events', id=contact.id, lang=lang) }}">{{contact.cached_events | safe }}</div>
         {% endif %}
       </div>
