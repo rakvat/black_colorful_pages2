@@ -44,7 +44,6 @@ class Radar:
             return self._format_events(lang, confirmed_events)
         except Exception as e:
             print("Failed", e)
-            breakpoint()
             return None
 
     def _format_events(self, lang: str, events: List[Any]) -> Optional[str]:
