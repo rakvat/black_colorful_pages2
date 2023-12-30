@@ -16,7 +16,7 @@ from radar import Radar
 app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
 mysql = MySQL(app)
-NUM_RADAR_IDS_TO_CACHE_PER_REQUEST = 5
+NUM_RADAR_IDS_TO_CACHE_PER_REQUEST = 8
 
 def auth_required(f):
     @wraps(f)
