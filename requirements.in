@@ -1,7 +1,6 @@
-mysqlclient==2.1.1  # stato does not install 2.2.1 because of missig pkg-config
-Werkzeug==2.2.2  # pinned for compatibility with flask
-Flask==2.2.2
-Flask-MySQLdb==1.0.1
+mysqlclient==2.2.0   # frozen for strato
+Flask
+Flask-MySQLdb
 bcrypt
 Babel
 requests

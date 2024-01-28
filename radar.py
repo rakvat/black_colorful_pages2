@@ -3,7 +3,7 @@ import dependencies # sets sys path for packages (has to be the first line)
 from babel.dates import format_date, format_time
 import requests
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from constants import LANGUAGES
 from l10n.l import L
@@ -13,7 +13,7 @@ class Radar:
     def __init__(self, group_id: int) -> None:
         self.group_id = group_id
 
-    def get_events(self) -> Dict[str, Optional[str]]:
+    def get_events(self) -> dict[str, str | None]:
         events_map = {}
         for lang in LANGUAGES:
             events = self._request(lang)
@@ -27,7 +27,7 @@ class Radar:
     def _query(self, lang:str) -> str:
         return f"{self.BASE_EVENTS_URL}?facets[group][]={self.group_id}&fields=title,date_time,event_status,url&limit=10&language={lang}"
 
-    def _request(self, lang: str) -> Optional[str]:
+    def _request(self, lang: str) -> str | None:
         query = self._query(lang)
         try:
             response = requests.get(query, timeout=10)
@@ -46,7 +46,7 @@ class Radar:
             print("Failed", e)
             return None
 
-    def _format_events(self, lang: str, events: List[Any]) -> Optional[str]:
+    def _format_events(self, lang: str, events: list[Any]) -> str | None:
         if not events:
             return None
         date_format = "EE, dd. MMM" if lang == 'de' else "EE, MMM dd"

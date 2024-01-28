@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from constants import LANGUAGES, LANG_COLUMNS, OTHER_COLUMNS, OTHER_COLUMNS_FULL
 from model import Contact, ContactForOrganize, Filter
-from typing import Dict, List, Optional, Union, Any, Tuple
+from typing import Any
 
 class DBContact:
 
@@ -9,7 +9,7 @@ class DBContact:
         self.mysql = mysql
         self.table_name = mysql.app.config["TABLE_NAME"]
 
-    def contacts(self, filter: Filter, lang: str) -> List[Contact]:
+    def contacts(self, filter: Filter, lang: str) -> list[Contact]:
         cursor = self.mysql.connection.cursor()
         cursor.execute(self._build_query(filter, lang))
 
@@ -18,7 +18,7 @@ class DBContact:
         cursor.close()
         return contacts
 
-    def contacts_for_organize(self, filter: Filter) -> List[ContactForOrganize]:
+    def contacts_for_organize(self, filter: Filter) -> list[ContactForOrganize]:
         cursor = self.mysql.connection.cursor()
         cursor.execute(self._build_organize_query(filter))
 
@@ -55,7 +55,7 @@ class DBContact:
             ORDER BY name_en;"""
         )
 
-    def _get_filter_query(self, filter: Filter, lang: Optional[str] = None, only_published: bool = True) -> str:
+    def _get_filter_query(self, filter: Filter, lang: str | None = None, only_published: bool = True) -> str:
         if filter.id:
             return f"WHERE Main.id={filter.id}"
 
@@ -78,7 +78,7 @@ class DBContact:
 
         return f"WHERE {' AND '.join(filter_items)}"
 
-    def _insert_lang_row(self, cursor: Any, contact: ContactForOrganize, column: str, languages: str) -> Optional[int]:
+    def _insert_lang_row(self, cursor: Any, contact: ContactForOrganize, column: str, languages: str) -> int | None:
         values = [getattr(contact.texts[lang], column) or '' for lang in LANGUAGES]
         if all(v == '' for v in values): # don't insert lang fields if all values are empty
             return None
@@ -98,7 +98,7 @@ class DBContact:
 
         # insert into main table
         columns = ",".join([*LANG_COLUMNS, *OTHER_COLUMNS_FULL])
-        raw_values: List[Union[str, int, None]] = [lang_ids[column] or 'NULL' for column in LANG_COLUMNS]
+        raw_values: list[str | int | None] = [lang_ids[column] or 'NULL' for column in LANG_COLUMNS]
         raw_values.extend([
             f"'{escape_for_sql(contact.geo_coord)}'",
             f"'{contact.radar_group_id}'"  if contact.radar_group_id else 'NULL',
@@ -165,7 +165,7 @@ class DBContact:
         self.mysql.connection.commit()
         cursor.close()
 
-    def contact_to_event_cache(self, count: int) -> List[Tuple[int, int]]:
+    def contact_to_event_cache(self, count: int) -> list[tuple[int, int]]:
         # returns the contact id and its radar_group_id of count contacts for which the events where never cached or > 5 hours ago
         five_hours_ago = (datetime.now() - timedelta(hours=5)).isoformat()
         cursor = self.mysql.connection.cursor()
@@ -182,7 +182,7 @@ class DBContact:
         cursor.close()
         return ids
 
-    def update_events_cache(self, contact_id: int, events_map: Dict[str, Optional[str]]) -> None:
+    def update_events_cache(self, contact_id: int, events_map: dict[str, str | None]) -> None:
         contact = self.contacts_for_organize(Filter.for_id(contact_id))[0]
         for lang in LANGUAGES:
             contact.texts[lang].cached_events = events_map[lang]

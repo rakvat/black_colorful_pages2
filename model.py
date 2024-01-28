@@ -1,6 +1,6 @@
 from datetime import datetime
 from dataclasses import dataclass
-from typing import Dict, Any, Optional
+from typing import Any
 
 from constants import LANGUAGES, LANG_COLUMNS
 
@@ -9,32 +9,32 @@ BBOX_RADIUS = 0.002
 @dataclass
 class ContactTexts:
     name: str
-    short_description: Optional[str]
-    description: Optional[str]
-    resources: Optional[str]
-    base_address: Optional[str]
-    addresses: Optional[str]
-    contact: Optional[str]
-    cached_events: Optional[str]
+    short_description: str | None
+    description: str | None
+    resources: str | None
+    base_address: str | None
+    addresses: str | None
+    contact: str | None
+    cached_events: str | None
 
 @dataclass
 class Contact(ContactTexts):
     geo_coord: str
-    radar_group_id: Optional[int] = None
-    id: Optional[int] = None
+    radar_group_id: int | None = None
+    id: int | None = None
 
     def __init__(self,
         id: int,
         name: str,
-        short_description: Optional[str],
-        description: Optional[str],
-        resources: Optional[str],
-        base_address: Optional[str],
-        addresses: Optional[str],
-        contact: Optional[str],
-        cached_events: Optional[str],
-        geo_coord: Optional[str],
-        radar_group_id: Optional[int],
+        short_description: str | None,
+        description: str | None,
+        resources: str | None,
+        base_address: str | None,
+        addresses: str | None,
+        contact: str | None,
+        cached_events: str | None,
+        geo_coord: str | None,
+        radar_group_id: int | None,
     ) -> None:
         self.id = id
         self.name = name
@@ -62,7 +62,7 @@ class Filter:
     is_location: bool = False
     is_media: bool = False
     query: str = ""
-    id: Optional[int] = None
+    id: int | None = None
 
     @staticmethod
     def from_request(request) -> "Filter":
@@ -80,7 +80,7 @@ class Filter:
 
 @dataclass
 class ContactForOrganize:
-    texts: Dict[str, ContactTexts]
+    texts: dict[str, ContactTexts]
     """ mapping of language key to texts """
 
     geo_coord: str
@@ -90,9 +90,9 @@ class ContactForOrganize:
     email: str
     state: str
     published: bool
-    radar_group_id: Optional[int] = None
-    events_cached_at: Optional[datetime] = None
-    id: Optional[int] = None
+    radar_group_id: int | None = None
+    events_cached_at: datetime | None = None
+    id: int | None = None
 
     @staticmethod
     def from_database_row(*args) -> "ContactForOrganize":
@@ -128,7 +128,7 @@ class ContactForOrganize:
         )
 
     @staticmethod
-    def from_form_data(data: Dict[str, Any]) -> "ContactForOrganize":
+    def from_form_data(data: dict[str, Any]) -> "ContactForOrganize":
         texts = {}
         for lang in LANGUAGES:
             contact_texts = ContactTexts(

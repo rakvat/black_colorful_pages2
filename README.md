@@ -7,7 +7,7 @@ A super simple flask app using mysql.
 
 ## Requirements
 
-Python 3.8
+Python 3.11
 pip install -r requirements.in
 
 ## Run
