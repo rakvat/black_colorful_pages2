@@ -54,6 +54,20 @@ def list():
 
     return render_template("list.html", contacts=contacts, lang=lang, L=L[lang])
 
+@app.route("/print_list")
+def print_list():
+    lang = _get_lang()
+    contacts = DBContact(mysql=mysql).contacts(filter=Filter(), lang=lang)
+
+    return render_template("print_list.html", contacts=contacts, lang=lang, L=L[lang])
+
+@app.route("/print_event_list")
+def print_event_list():
+    lang = _get_lang()
+    contacts = DBContact(mysql=mysql).contacts(filter=Filter(only_with_events=True), lang=lang)
+
+    return render_template("print_event_list.html", contacts=contacts, lang=lang, L=L[lang])
+
 @app.route("/imprint")
 def imprint():
     lang = _get_lang()

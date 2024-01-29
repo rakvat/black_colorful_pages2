@@ -106,5 +106,20 @@ Es gibt ein paar ähnliche Projekte, die ebenfalls Listen von linken Strukturen 
 Falls ihr Lust habt, Schwarz-Bunte-Seiten für eine andere Region aufzusetzen und noch Fragen habt, nehmt gerne Kontakt mit uns auf. <a href="mailto:info-at-schwarz-bunte-seiten-berlin.org"><i class="fa fa-envelope"></i> info-at-schwarz-bunte-seiten-berlin.org</a>. Der Quellcode ist <a href="https://github.com/rakvat/black_colorful_pages2" target="_blank">frei verfügbar</a>.
 </p>
 
+<h2>Woher kommen die Daten?</h2>
+
+<p>
+Die Daten über die Gruppen sind meist von deren Internetseiten und <a href="https://www.openstreetmap.de/" target="_blank">OpenStreetMap</a>.
+Eventdaten sind von <a href="https://radar.squat.net/de/groups/city/berlin" target="_blank">radar</a> importiert.
+</p>
+
+<h2>Druckbare Versionen</h2>
+
+<p><a href="{{url_for('print_list', lang=lang)}}"><i class="fa fa-print"></i> Ausführliche Gruppenbeschreibungen</a></p>
+
+<p><a href="{{url_for('print_event_list', lang=lang)}}"><i class="fa fa-calendar"></i> Gruppen mit baldigen Veranstaltungen</a></p>
+
+<p>Kontaktdaten finden sich nur in der interaktiven, nicht druckbaren <a href="{{url_for('list', lang=lang)}}"><i class="fa fa-list"></i> Liste</a></p>
+
 </div>
 {% endblock %}

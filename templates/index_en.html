@@ -108,5 +108,20 @@ It is currently maintained as best as possible by a single person. Support is ve
 If you feel like setting up Schwarz-Bunte pages for another region and still have questions, feel free to contact us at <a href="mailto:info-at-schwarz-bunte-seiten-berlin.org"><i class="fa fa-envelope"></i> info-at-schwarz-bunte-seiten-berlin.org</a>. The source code is <a href="https://github.com/rakvat/black_colorful_pages2" target="_blank">publicly available</a>.
 </p>
 
+<h2>Where does the Data come from?</h2>
+
+<p>
+The data about the groups is mostly from their websites and <a href="https://www.openstreetmap.de/" target="_blank">OpenStreetMap</a>.
+Event data is imported from <a href="https://radar.squat.net/de/groups/city/berlin" target="_blank">radar</a>.
+</p>
+
+<h2>Printable Versions</h2>
+
+<p><a href="{{url_for('print_list', lang=lang)}}"><i class="fa fa-print"></i> Detailed group descriptions</a></p>
+
+<p><a href="{{url_for('print_event_list', lang=lang)}}"><i class="fa fa-calendar"></i> Groups with upcoming events</a></p>
+
+<p>Contact details can only be found in the interactive, non-printable <a href="{{url_for('list', lang=lang)}}"><i class="fa fa-list"></i> list</a></p>
+
 </div>
 {% endblock %}

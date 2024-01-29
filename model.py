@@ -63,6 +63,7 @@ class Filter:
     is_media: bool = False
     query: str = ""
     id: int | None = None
+    only_with_events: bool = False
 
     @staticmethod
     def from_request(request) -> "Filter":

@@ -66,6 +66,8 @@ class DBContact:
             filter_items.append("is_location=TRUE")
         if filter.is_media:
             filter_items.append("is_media=TRUE")
+        if filter.only_with_events:
+            filter_items.append("cached_events IS NOT NULL")
         if filter.query:
             languages = [lang] if lang else LANGUAGES
             query = filter.query.replace('"', '\\"')
