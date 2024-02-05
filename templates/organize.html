@@ -32,6 +32,7 @@
       <p><b>Addresses:</b> {{contact.texts[lang].addresses | urlize(target='_blank') | replace('\n', '<br/>' | safe)}}</p>
       <p><b>Contact:</b> {{contact.texts[lang].contact | urlize(target='_blank') | replace('@', '-at-' | safe) | replace('\n', '<br/>' | safe)}}</p>
       <p><b>Cached Events:</b> {{contact.texts[lang].cached_events | safe}} </p>
+      <p><b>Cached OSM Info:</b> {{contact.texts[lang].osm_cached_info | safe}} </p>
     </div>
     {% endfor %}
     <div class="w3-third full-last">
@@ -61,6 +62,15 @@
         {% endif %}
       </p>
       <p><b>Events cached at:</b> {{contact.events_cached_at or ''}}</p>
+      <p>
+        <b>OSM Node ID:</b>
+        {% if contact.osm_node_id %}
+          <a href="https://www.openstreetmap.org/node/{{contact.osm_node_id}}" target="_blank">{{contact.osm_node_id}}</a>
+        {% endif %}
+      </p>
+      <p><b>OSM JSON:</b> {{contact.osm_cached_json or ''}} </p>
+      <p><b>OSM data cached at:</b> {{contact.osm_cached_at or ''}}</p>
+
       <p><a class="w3-button w3-black none" href="{{url_for('organize_edit', id=contact.id)}}">Edit</a></p>
 
       <form class="controls-form" method="post" action="{{url_for('organize_contact_delete', id=contact.id)}}">

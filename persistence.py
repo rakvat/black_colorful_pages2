@@ -104,13 +104,16 @@ class DBContact:
         raw_values.extend([
             f"'{escape_for_sql(contact.geo_coord)}'",
             f"'{contact.radar_group_id}'"  if contact.radar_group_id else 'NULL',
+            f"'{contact.osm_node_id}'"  if contact.osm_node_id else 'NULL',
             as_sql_bool(contact.is_group),
             as_sql_bool(contact.is_location),
             as_sql_bool(contact.is_media),
             f"'{escape_for_sql(contact.email)}'",
             f"'{escape_for_sql(contact.state)}'",
             as_sql_bool(contact.published),
-            'NULL',
+            'NULL',  # events_cached_at
+            'NULL',  # osm_cached_json
+            'NULL',  # osm_cached_at
         ]);
         values = ",".join(map(str, raw_values))
         cursor.execute(f"INSERT INTO {self.table_name}({columns}) VALUES ({values});")
@@ -145,6 +148,7 @@ class DBContact:
         values = ",".join([
             f"geo_coord='{escape_for_sql(contact.geo_coord)}'",
             f"radar_group_id={contact.radar_group_id}" if contact.radar_group_id else "radar_group_id=NULL",
+            f"osm_node_id={contact.osm_node_id}" if contact.osm_node_id else "osm_node_id=NULL",
             f"is_group={as_sql_bool(contact.is_group)}",
             f"is_location={as_sql_bool(contact.is_location)}",
             f"is_media={as_sql_bool(contact.is_media)}",
@@ -152,6 +156,8 @@ class DBContact:
             f"state='{escape_for_sql(contact.state)}'",
             f"published={as_sql_bool(contact.published)}",
             f"events_cached_at='{contact.events_cached_at.isoformat()}'" if contact.events_cached_at else "events_cached_at=NULL",
+            f"osm_cached_json='{escape_for_sql(contact.osm_cached_json)}'" if contact.osm_cached_json else "osm_cached_json=NULL",
+            f"osm_cached_at='{contact.osm_cached_at.isoformat()}'" if contact.osm_cached_at else "osm_cached_at=NULL",
         ]);
         cursor.execute(f"UPDATE {self.table_name} SET {values} WHERE id={id};")
         self.mysql.connection.commit()

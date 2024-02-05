@@ -16,11 +16,13 @@ class ContactTexts:
     addresses: str | None
     contact: str | None
     cached_events: str | None
+    osm_cached_info: str | None
 
 @dataclass
 class Contact(ContactTexts):
     geo_coord: str
     radar_group_id: int | None = None
+    osm_node_id: int | None = None
     id: int | None = None
 
     def __init__(self,
@@ -33,8 +35,10 @@ class Contact(ContactTexts):
         addresses: str | None,
         contact: str | None,
         cached_events: str | None,
+        osm_cached_info: str | None,
         geo_coord: str | None,
         radar_group_id: int | None,
+        osm_node_id: int | None,
     ) -> None:
         self.id = id
         self.name = name
@@ -45,8 +49,10 @@ class Contact(ContactTexts):
         self.addresses = addresses or ''
         self.contact = contact or ''
         self.cached_events = cached_events or ''
+        self.osm_cached_info = osm_cached_info or ''
         self.geo_coord = geo_coord or ''
         self.radar_group_id = radar_group_id
+        self.osm_node_id = osm_node_id
 
         if self.geo_coord:
             # set some fields needed for openstreetmap
@@ -92,7 +98,10 @@ class ContactForOrganize:
     state: str
     published: bool
     radar_group_id: int | None = None
+    osm_node_id: int | None = None
     events_cached_at: datetime | None = None
+    osm_cached_at: datetime | None = None
+    osm_cached_json: str | None = None
     id: int | None = None
 
     @staticmethod
@@ -110,6 +119,7 @@ class ContactForOrganize:
                 addresses = args[index * num_lang_columns + 6] or '',
                 contact = args[index * num_lang_columns + 7] or '',
                 cached_events = args[index * num_lang_columns + 8] or '',
+                osm_cached_info = args[index * num_lang_columns + 9] or '',
             )
             texts[lang] = contact_texts
         index_offset = 1 + num_lang_columns * len(LANGUAGES)
@@ -119,13 +129,16 @@ class ContactForOrganize:
             texts = texts,
             geo_coord = args[index_offset + 0],
             radar_group_id = args[index_offset + 1],
-            is_group = args[index_offset + 2],
-            is_location = args[index_offset + 3],
-            is_media = args[index_offset + 4],
-            email = args[index_offset + 5],
-            state = args[index_offset + 6],
-            published = args[index_offset + 7],
-            events_cached_at = args[index_offset + 8],
+            osm_node_id = args[index_offset + 2],
+            is_group = args[index_offset + 3],
+            is_location = args[index_offset + 4],
+            is_media = args[index_offset + 5],
+            email = args[index_offset + 6],
+            state = args[index_offset + 7],
+            published = args[index_offset + 8],
+            events_cached_at = args[index_offset + 9],
+            osm_cached_json = args[index_offset + 10],
+            osm_cached_at = args[index_offset + 11],
         )
 
     @staticmethod
@@ -141,6 +154,7 @@ class ContactForOrganize:
                 addresses = data.get(f"{lang}_addresses", ""),
                 contact = data.get(f"{lang}_contact", ""),
                 cached_events = "",
+                osm_cached_info = "",
             )
             texts[lang] = contact_texts
 
@@ -154,6 +168,7 @@ class ContactForOrganize:
             state = data.get("state", ""),
             published = data.get("published", False),
             radar_group_id = data.get("radar_group_id"),
+            osm_node_id = data.get("osm_node_id"),
         )
 
     @staticmethod
@@ -169,6 +184,7 @@ class ContactForOrganize:
                 addresses = "",
                 contact = "",
                 cached_events = "",
+                osm_cached_info = "",
             )
             texts[lang] = contact_texts
 

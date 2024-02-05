@@ -15,7 +15,9 @@ pip install -r requirements.in
 
 ## Run
 
+```
 flask --app app --debug run
+```
 
 ## Config File
 
@@ -67,6 +69,10 @@ mysql> describe contacts_berlin;
 | radar_group_id    | int         | YES  |     | NULL    |                |
 | cached_events     | smallint    | YES  |     | NULL    |                |
 | events_cached_at  | timestamp   | YES  |     | NULL    |                |
+| osm_node_id       | int         | YES  |     | NULL    |                |
+| osm_cached_json   | text        | YES  |     | NULL    |                |
+| osm_cached_info   | smallint    | YES  |     | NULL    |                |
+| osm_cached_at     | timestamp   | YES  |     | NULL    |                |
 +-------------------+-------------+------+-----+---------+----------------+
 
 mysql> describe contacts_berlin_lang;
