@@ -10,6 +10,7 @@ from l10n.l import L
 
 class Radar:
     BASE_EVENTS_URL = "https://radar.squat.net/api/1.2/search/events.json"
+
     def __init__(self, group_id: int) -> None:
         self.group_id = group_id
 

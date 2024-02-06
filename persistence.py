@@ -4,6 +4,8 @@ from model import Contact, ContactForOrganize, Filter
 from typing import Any
 
 class DBContact:
+    EVENT_CACHE_VALID_FOR = 5 # hours
+    OSM_CACHE_VALID_FOR = 240 # hours = 10 days
 
     def __init__(self, mysql):
         self.mysql = mysql
@@ -68,6 +70,8 @@ class DBContact:
             filter_items.append("is_media=TRUE")
         if filter.only_with_events:
             filter_items.append("cached_events IS NOT NULL")
+        if filter.only_with_osm_json:
+            filter_items.append("osm_cached_json IS NOT NULL")
         if filter.query:
             languages = [lang] if lang else LANGUAGES
             query = filter.query.replace('"', '\\"')
@@ -174,12 +178,12 @@ class DBContact:
         cursor.close()
 
     def contact_to_event_cache(self, count: int) -> list[tuple[int, int]]:
-        # returns the contact id and its radar_group_id of count contacts for which the events where never cached or > 5 hours ago
-        five_hours_ago = (datetime.now() - timedelta(hours=5)).isoformat()
+        # returns the contact id and its radar_group_id of count contacts for which the events where never cached or > EVENT_CACHE_VALID_FOR hours ago
+        hours_ago = (datetime.now() - timedelta(hours=self.EVENT_CACHE_VALID_FOR)).isoformat()
         cursor = self.mysql.connection.cursor()
         cursor.execute(
             f"SELECT id, radar_group_id FROM {self.table_name} "
-            f"WHERE radar_group_id IS NOT NULL AND (events_cached_at IS NULL OR events_cached_at < '{five_hours_ago}') "
+            f"WHERE radar_group_id IS NOT NULL AND (events_cached_at IS NULL OR events_cached_at < '{hours_ago}') "
             f"LIMIT {count}"
         )
 
@@ -196,6 +200,37 @@ class DBContact:
             contact.texts[lang].cached_events = events_map[lang]
         contact.events_cached_at = datetime.now()
         self.update(contact_id, contact)
+
+    def contact_to_osm_cache(self, count: int) -> list[tuple[int, int]]:
+        # returns the contact id and its osm_node_id of count contacts for which the events where never cached or > OSM_CACHE_VALID_FOR hours ago
+        hours_ago = (datetime.now() - timedelta(hours=self.OSM_CACHE_VALID_FOR)).isoformat()
+        cursor = self.mysql.connection.cursor()
+        cursor.execute(
+            f"SELECT id, osm_node_id FROM {self.table_name} "
+            f"WHERE osm_node_id IS NOT NULL AND (osm_cached_at IS NULL OR osm_cached_at < '{hours_ago}') "
+            f"LIMIT {count}"
+        )
+
+        if cursor.rowcount == 0:
+            return []
+        ids = [(contact_id, osm_node_id) for contact_id, osm_node_id in cursor]
+
+        cursor.close()
+        return ids
+
+    def contacts_with_osm(self) -> list[ContactForOrganize]:
+        return self.contacts_for_organize(filter=Filter(only_with_osm_json=True))
+
+    def update_osm_json(self, contact_id: int, osm_json: str | None) -> None:
+        contact = self.contacts_for_organize(Filter.for_id(contact_id))[0]
+        contact.osm_cached_json = osm_json
+        contact.osm_cached_at = datetime.now()
+        self.update(contact_id, contact)
+
+    def update_osm_info(self, contact: ContactForOrganize, osm_info_map: dict[str, str | None]) -> None:
+        for lang in LANGUAGES:
+            contact.texts[lang].osm_cached_info = osm_info_map[lang]
+        self.update(contact.id, contact)
 
 
 def as_sql_bool(value: bool) -> str:

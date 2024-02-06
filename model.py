@@ -70,6 +70,7 @@ class Filter:
     query: str = ""
     id: int | None = None
     only_with_events: bool = False
+    only_with_osm_json: bool = False
 
     @staticmethod
     def from_request(request) -> "Filter":

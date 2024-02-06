@@ -12,11 +12,13 @@ from l10n.l import L
 from model import Filter, ContactForOrganize
 from persistence import DBContact
 from radar import Radar
+from osm import OSM
 
 app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
 mysql = MySQL(app)
 NUM_RADAR_IDS_TO_CACHE_PER_REQUEST = 8
+NUM_OSM_IDS_TO_CACHE_PER_REQUEST = 1
 
 def auth_required(f):
     @wraps(f)
@@ -133,3 +135,21 @@ def cache_events():
         events_map = Radar(radar_group_id).get_events()
         DBContact(mysql=mysql).update_events_cache(contact_id, events_map)
     return f"cached {[contact_id for (contact_id, _) in contact_and_radar_ids]}"
+
+@app.route("/cache-osm-data", methods=["GET"])
+def cache_osm_data():
+    contact_and_osm_node_ids = DBContact(mysql=mysql).contact_to_osm_cache(count=NUM_OSM_IDS_TO_CACHE_PER_REQUEST)
+    if not len(contact_and_osm_node_ids):
+        return "nothing to cache"
+    for contact_id, osm_node_id in contact_and_osm_node_ids:
+        osm_json = OSM.get_raw_json(osm_node_id)
+        DBContact(mysql=mysql).update_osm_json(contact_id, osm_json)
+    return f"cached {[contact_id for (contact_id, _) in contact_and_osm_node_ids]}"
+
+@app.route("/parse-osm-data", methods=["GET"])
+def parse_osm_data():
+    contacts_with_osm = DBContact(mysql=mysql).contacts_with_osm()
+    for contact in contacts_with_osm:
+        osm_info_map = OSM.parse(contact.osm_cached_json)
+        DBContact(mysql=mysql).update_osm_info(contact, osm_info_map)
+    return f"parsed {len(contacts_with_osm)} contacts with OSM"
