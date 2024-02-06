@@ -64,5 +64,43 @@
       "de":"Für die Inhalte der verlinkten Seiten sind die Seiten selbst verantwortlich.",
       "en": "content of linked pages is in the responsibility of these pages"
     }
+  },
+  "osm": {
+    "yes": {
+      "de": "ja",
+      "en": "yes"
+    },
+    "open": {
+      "de": "Offen",
+      "en": "Open"
+    },
+    "phone": {
+      "de": "Telefon",
+      "en": "Phone"
+    },
+    "wheelchair_access": {
+      "de": "Rollstuhlzugang",
+      "en": "Wheelchair access"
+    },
+    "wheelchair_access.yes": {
+      "de": "uneingeschränkt",
+      "en": "unlimited"
+    },
+    "wheelchair_access.limited": {
+      "de": "eingeschränkt",
+      "en": "limited"
+    },
+    "wheelchair_access.no": {
+      "de": "nein",
+      "en": "no"
+    },
+    "wheelchair_access.designated": {
+      "de": "ausgewiesen",
+      "en": "designated"
+    },
+    "toilets": {
+      "de": "Toiletten",
+      "en": "Toilets"
+    }
   }
 }

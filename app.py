@@ -12,7 +12,7 @@ from l10n.l import L
 from model import Filter, ContactForOrganize
 from persistence import DBContact
 from radar import Radar
-from osm import OSM
+from osm import get_raw_osm_json, parse_osm_json
 
 app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
@@ -142,7 +142,7 @@ def cache_osm_data():
     if not len(contact_and_osm_node_ids):
         return "nothing to cache"
     for contact_id, osm_node_id in contact_and_osm_node_ids:
-        osm_json = OSM.get_raw_json(osm_node_id)
+        osm_json = get_raw_osm_json(osm_node_id)
         DBContact(mysql=mysql).update_osm_json(contact_id, osm_json)
     return f"cached {[contact_id for (contact_id, _) in contact_and_osm_node_ids]}"
 
@@ -150,6 +150,6 @@ def cache_osm_data():
 def parse_osm_data():
     contacts_with_osm = DBContact(mysql=mysql).contacts_with_osm()
     for contact in contacts_with_osm:
-        osm_info_map = OSM.parse(contact.osm_cached_json)
+        osm_info_map = parse_osm_json(contact.osm_cached_json)
         DBContact(mysql=mysql).update_osm_info(contact, osm_info_map)
     return f"parsed {len(contacts_with_osm)} contacts with OSM"
