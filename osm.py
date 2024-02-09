@@ -21,8 +21,8 @@ def get_raw_osm_json(node_id: int) -> str | None:
         if not elements or len(elements) != 1:
             return None
         return json.dumps(elements[0], ensure_ascii=False)
-    except Exception as e:
-        print("Failed", e)
+    except Exception as err:
+        print("Failed", err)
         return None
 
 def parse_osm_json(node_json: str) -> dict[str, str | None]:
@@ -47,9 +47,15 @@ def _parse_opening_hours(tags: Any, lang: str) -> str | None:
     if not field:
         return None
 
-    oh = hoh.OHParser(field, locale=lang)
+    try:
+        oh = hoh.OHParser(field, locale=lang)
+        text = " ".join(oh.description())
+    except hoh.exceptions.ParseError as err:
+        print("Parse error", err)
+        # just take the plain field
+        text = field
 
-    return f"<strong>{L[lang]['osm']['open']}</strong>: {' '.join(oh.description())}"
+    return f"<strong>{L[lang]['osm']['open']}</strong>: {text}"
 
 def _parse_wheelchair(tags: Any, lang: str) -> str | None:
     value = tags.get("wheelchair")

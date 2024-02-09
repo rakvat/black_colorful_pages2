@@ -18,7 +18,7 @@ app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
 mysql = MySQL(app)
 NUM_RADAR_IDS_TO_CACHE_PER_REQUEST = 8
-NUM_OSM_IDS_TO_CACHE_PER_REQUEST = 1
+NUM_OSM_IDS_TO_CACHE_PER_REQUEST = 10
 
 def auth_required(f):
     @wraps(f)
@@ -149,7 +149,12 @@ def cache_osm_data():
 @app.route("/parse-osm-data", methods=["GET"])
 def parse_osm_data():
     contacts_with_osm = DBContact(mysql=mysql).contacts_with_osm()
+    failed = []
     for contact in contacts_with_osm:
-        osm_info_map = parse_osm_json(contact.osm_cached_json)
-        DBContact(mysql=mysql).update_osm_info(contact, osm_info_map)
-    return f"parsed {len(contacts_with_osm)} contacts with OSM"
+        try:
+            osm_info_map = parse_osm_json(contact.osm_cached_json)
+            DBContact(mysql=mysql).update_osm_info(contact, osm_info_map)
+        except Exception as err:
+            failed.append(contact.id)
+
+    return f"parsed {len(contacts_with_osm)} contacts with OSM. Failed: {failed}"
