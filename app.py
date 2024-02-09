@@ -102,7 +102,7 @@ def organize_edit(id: int):
 @auth_required
 def organize_contact(id: int):
     if request.method == "POST":  # REST PUT semantics, but restricted to form method options
-        DBContact(mysql=mysql).update(id, ContactForOrganize.from_form_data(request.form))
+        DBContact(mysql=mysql).update(id, ContactForOrganize.from_form_data(request.form), keep_cache=True)
     return redirect(url_for("organize"))
 
 @app.route("/organize/<int:id>/delete", methods=["POST"])

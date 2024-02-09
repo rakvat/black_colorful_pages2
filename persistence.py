@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from constants import LANGUAGES, LANG_COLUMNS, OTHER_COLUMNS, OTHER_COLUMNS_FULL
+from constants import CACHED_LANG_COLUMNS, LANGUAGES, LANG_COLUMNS, OTHER_COLUMNS, OTHER_COLUMNS_FULL
 from model import Contact, ContactForOrganize, Filter
 from typing import Any
 
@@ -124,7 +124,7 @@ class DBContact:
         self.mysql.connection.commit()
         cursor.close()
 
-    def update(self, id: int, contact: ContactForOrganize) -> None:
+    def update(self, id: int, contact: ContactForOrganize, keep_cache: bool = False) -> None:
         cursor = self.mysql.connection.cursor()
         lang_columns = ",".join(LANG_COLUMNS)
         languages = ",".join(LANGUAGES)
@@ -133,6 +133,9 @@ class DBContact:
 
         # update language strings in lang table
         for index, column in enumerate(LANG_COLUMNS):
+            if keep_cache and column in CACHED_LANG_COLUMNS:
+                continue
+
             lang_id = contact_db_row[index]
             if not lang_id:
                 lang_id = self._insert_lang_row(cursor, contact, column, languages)
@@ -148,8 +151,7 @@ class DBContact:
         self.mysql.connection.commit()
 
         # update main table
-        lang_columns = ",".join([*LANG_COLUMNS, *OTHER_COLUMNS_FULL])
-        values = ",".join([
+        columns = [
             f"geo_coord='{escape_for_sql(contact.geo_coord)}'",
             f"radar_group_id={contact.radar_group_id}" if contact.radar_group_id else "radar_group_id=NULL",
             f"osm_node_id={contact.osm_node_id}" if contact.osm_node_id else "osm_node_id=NULL",
@@ -159,10 +161,14 @@ class DBContact:
             f"email='{escape_for_sql(contact.email)}'",
             f"state='{escape_for_sql(contact.state)}'",
             f"published={as_sql_bool(contact.published)}",
-            f"events_cached_at='{contact.events_cached_at.isoformat()}'" if contact.events_cached_at else "events_cached_at=NULL",
-            f"osm_cached_json='{escape_for_sql(contact.osm_cached_json)}'" if contact.osm_cached_json else "osm_cached_json=NULL",
-            f"osm_cached_at='{contact.osm_cached_at.isoformat()}'" if contact.osm_cached_at else "osm_cached_at=NULL",
-        ]);
+        ]
+        if not keep_cache:
+            columns.extend([
+                f"events_cached_at='{contact.events_cached_at.isoformat()}'" if contact.events_cached_at else "events_cached_at=NULL",
+                f"osm_cached_json='{escape_for_sql(contact.osm_cached_json)}'" if contact.osm_cached_json else "osm_cached_json=NULL",
+                f"osm_cached_at='{contact.osm_cached_at.isoformat()}'" if contact.osm_cached_at else "osm_cached_at=NULL",
+            ])
+        values = ",".join(columns)
         cursor.execute(f"UPDATE {self.table_name} SET {values} WHERE id={id};")
         self.mysql.connection.commit()
         cursor.close()
