@@ -59,15 +59,26 @@
   const previews = document.querySelectorAll(".preview")
   const fullViews = document.querySelectorAll(".full-view")
   const collapseButtons = document.querySelectorAll(".collapse-button")
+
+  const expand = (i) => {
+      previews[i].style.display="none";
+      fullViews[i].style.display="block";
+      const mapDiv = fullViews[i].closest(".contact").querySelector(".map")
+      if (mapDiv.dataset.marker && !mapDiv.hasChildNodes()) {
+          const { marker, bbox } = mapDiv.dataset;
+          mapDiv.innerHTML = "<iframe width='350' height='350' frameborder='0' scrolling='no' marginheight='0' marginwidth='0' src='https://www.openstreetmap.org/export/embed.html?bbox="+bbox+"&layer=mapnik&marker="+marker+"&style='border: 1px solid black'></iframe>";
+      }
+  }
+
+  if (previews.length == 1 && fullViews.length == 1) {
+      // auto-expand if only 1 result
+      expand(0)
+  }
+
   for(let i = 0; i < previews.length; i++) {
       previews[i].addEventListener("click", (event) => {
-          previews[i].style.display="none";
-          fullViews[i].style.display="block";
-          const mapDiv = event.currentTarget.closest(".contact").querySelector(".map")
-          if (mapDiv.dataset.marker && !mapDiv.hasChildNodes()) {
-              const { marker, bbox } = mapDiv.dataset;
-              mapDiv.innerHTML = "<iframe width='350' height='350' frameborder='0' scrolling='no' marginheight='0' marginwidth='0' src='https://www.openstreetmap.org/export/embed.html?bbox="+bbox+"&layer=mapnik&marker="+marker+"&style='border: 1px solid black'></iframe>";
-          }
+          console.log("!!!", i)
+          expand(i)
           const eventsDiv = event.currentTarget.closest(".contact").querySelector(".events");
           if (eventsDiv && !eventsDiv.dataset.hasFreshData) {
               const xhr = new XMLHttpRequest();
