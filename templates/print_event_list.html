@@ -13,7 +13,7 @@
 
 {% for contact in contacts if contact.cached_events%}
 <div class="w3-row contact">
-  <h3 class="contact-title">{{contact.name}}  &mdash; {{contact.short_description}} &mdash; {{contact.base_address | urlize(target='_blank')}}</h3>
+  <h3 class="contact-title"><a href="{{ url_for('list_entry', id=contact.id, lang=lang)}}">{{contact.name}} &mdash; {{contact.short_description}} &mdash; {{contact.base_address | urlize(target='_blank')}}</a></h3>
   <div>{{contact.description | urlize(target='_blank') | replace('\n', '<br/>' | safe)}}</div>
   <div class='events'>{{contact.cached_events | safe }}</div>
 </div>

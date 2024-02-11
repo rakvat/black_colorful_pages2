@@ -56,6 +56,14 @@ def list():
 
     return render_template("list.html", contacts=contacts, lang=lang, L=L[lang])
 
+@app.route("/list/<id>")
+def list_entry(id):
+    filter = Filter.for_id(id)
+    lang = _get_lang()
+    contacts = DBContact(mysql=mysql).contacts(filter=filter, lang=lang)
+
+    return render_template("list.html", contacts=contacts, lang=lang, L=L[lang])
+
 @app.route("/print_list")
 def print_list():
     lang = _get_lang()
