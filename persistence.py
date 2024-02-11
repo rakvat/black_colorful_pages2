@@ -165,7 +165,7 @@ class DBContact:
         if not keep_cache:
             columns.extend([
                 f"events_cached_at='{contact.events_cached_at.isoformat()}'" if contact.events_cached_at else "events_cached_at=NULL",
-                f"osm_cached_json='{escape_for_sql(contact.osm_cached_json)}'" if contact.osm_cached_json else "osm_cached_json=NULL",
+                f"osm_cached_json='{contact.osm_cached_json}'" if contact.osm_cached_json else "osm_cached_json=NULL",
                 f"osm_cached_at='{contact.osm_cached_at.isoformat()}'" if contact.osm_cached_at else "osm_cached_at=NULL",
             ])
         values = ",".join(columns)

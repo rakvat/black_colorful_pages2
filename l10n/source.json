@@ -94,6 +94,10 @@
       "de": "nein",
       "en": "no"
     },
+    "wheelchair_access.unknown": {
+      "de": "unklar",
+      "en": "unknown"
+    },
     "wheelchair_access.designated": {
       "de": "ausgewiesen",
       "en": "designated"

@@ -20,7 +20,7 @@ def get_raw_osm_json(node_id: int) -> str | None:
         elements = response.json()["elements"]
         if not elements or len(elements) != 1:
             return None
-        return json.dumps(elements[0], ensure_ascii=False)
+        return json.dumps(elements[0], ensure_ascii=False).replace("\\\"", "")
     except Exception as err:
         print("Failed", err)
         return None
@@ -66,6 +66,8 @@ def _parse_wheelchair(tags: Any, lang: str) -> str | None:
     text = f"<strong>{L[lang]['osm']['wheelchair_access']}</strong>: {L[lang]['osm'][l10n_key]}"
 
     description = tags.get(f"wheelchair:description:{lang}")
+    if not description:
+        description = tags.get("wheelchair:description")
     if description:
         text = f"{text} ({description})"
 
@@ -74,19 +76,24 @@ def _parse_wheelchair(tags: Any, lang: str) -> str | None:
 def _parse_phone(tags: Any, lang: str) -> str | None:
     value = tags.get("contact:phone")
     if not value:
+        value = tags.get("phone")
+    if not value:
         return None
+
+    value = ", ".join(value.split(";"))
 
     return f"<strong>{L[lang]['osm']['phone']}</strong>: {value}"
 
 def _parse_toilets(tags: Any, lang: str) -> str | None:
     value = tags.get("toilets")
-    if not value or value == "no":
+    wheelchair_access = tags.get("toilets:wheelchair")
+    if not wheelchair_access and (not value or value == "no"):
         return None
 
     text = f"<strong>{L[lang]['osm']['toilets']}</strong>: {L[lang]['osm']['yes']}"
 
-    wheelchair_access = tags.get("toilets:wheelchair")
-    if wheelchair_access and wheelchair_access == "yes":
-        text = f"{text} ({L[lang]['osm']['wheelchair_access']})"
+    if wheelchair_access:
+        l10n_key = f"wheelchair_access.{wheelchair_access}" if wheelchair_access in ['yes', 'limited', 'no'] else "wheelchair_access.unknown"
+        text = f"{text} ({L[lang]['osm']['wheelchair_access']}: {L[lang]['osm'][l10n_key]})"
 
     return text
