@@ -1,0 +1,12 @@
+name: cache-osm
+on:
+  schedule:
+    - cron: "*/15 0-4 1 * *"
+  workflow_dispatch:
+
+jobs:
+  trigger-cache-osm:
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        run: curl https://schwarz-bunte-seiten-berlin.org/cache-osm-data
