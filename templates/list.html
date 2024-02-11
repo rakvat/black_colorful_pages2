@@ -43,6 +43,8 @@
       {{contact.addresses | urlize(target='_blank') | replace('\n', '<br/>' | safe)}}
       {% if contact.contact %}<h4>{{L['list']['contact_header']}}</h4>{% endif %}
       {{contact.contact | urlize(target='_blank') | replace('@', '-at-' | safe) | replace('\n', '<br/>' | safe)}}
+      {% if contact.osm_cached_info %}<h4>{{L['list']['tags_header']}}</h4>{% endif %}
+      {{contact.osm_cached_info | safe}}
       </div>
       <div class="w3-third full-last">
         <button class="collapse-button" aria-label="collapse full view"><i class="fa fa-chevron-up"></i></button>

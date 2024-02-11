@@ -50,6 +50,10 @@
       "de": "Kontakt",
       "en": "Contact"
     },
+    "tags_header": {
+      "de": "Merkmale",
+      "en": "Features"
+    },
     "events_header": {
       "de": "Veranstaltungen",
       "en": "Events"
