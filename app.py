@@ -1,8 +1,17 @@
-import dependencies # sets sys path for packages (has to be the first line)
+import dependencies  # sets sys path for packages (has to be the first line)
 
 import bcrypt
 from datetime import datetime, timedelta
-from flask import abort, Flask, render_template, request, Response, url_for, redirect
+from flask import (
+    abort,
+    Flask,
+    make_response,
+    redirect,
+    render_template,
+    request,
+    Response,
+    url_for,
+)
 from flask_mysqldb import MySQL
 from functools import wraps
 import json
@@ -22,6 +31,7 @@ mysql = MySQL(app)
 NUM_RADAR_IDS_TO_CACHE_PER_REQUEST = 8
 NUM_OSM_IDS_TO_CACHE_PER_REQUEST = 10
 
+
 def auth_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -33,22 +43,29 @@ def auth_required(f):
                 return f(*args, **kwargs)
 
         return Response(
-                "Could not verify your access level for that URL.\n"
-                "You have to login with proper credentials",
-                401,
-                {"WWW-Authenticate": "Basic realm='Login Required'"},
-            )
+            "Could not verify your access level for that URL.\n"
+            "You have to login with proper credentials",
+            401,
+            {"WWW-Authenticate": "Basic realm='Login Required'"},
+        )
 
     return decorated
 
+
 def _get_lang():
     lang_pararameter = request.args.get("lang") or app.config["DEFAULT_LANG"]
-    return lang_pararameter if lang_pararameter in LANGUAGES else app.config["DEFAULT_LANG"]
+    return (
+        lang_pararameter
+        if lang_pararameter in LANGUAGES
+        else app.config["DEFAULT_LANG"]
+    )
+
 
 @app.route("/")
 def index():
     lang = _get_lang()
     return render_template(f"index_{lang}.html", lang=lang, L=L[lang])
+
 
 @app.route("/list")
 def list():
@@ -58,6 +75,7 @@ def list():
 
     return render_template("list.html", contacts=contacts, lang=lang, L=L[lang])
 
+
 @app.route("/list/<id>")
 def list_entry(id):
     filter = Filter.for_id(id)
@@ -66,6 +84,7 @@ def list_entry(id):
 
     return render_template("list.html", contacts=contacts, lang=lang, L=L[lang])
 
+
 @app.route("/print_list")
 def print_list():
     lang = _get_lang()
@@ -73,17 +92,24 @@ def print_list():
 
     return render_template("print_list.html", contacts=contacts, lang=lang, L=L[lang])
 
+
 @app.route("/print_event_list")
 def print_event_list():
     lang = _get_lang()
-    contacts = DBContact(mysql=mysql).contacts(filter=Filter(only_with_events=True), lang=lang)
+    contacts = DBContact(mysql=mysql).contacts(
+        filter=Filter(only_with_events=True), lang=lang
+    )
 
-    return render_template("print_event_list.html", contacts=contacts, lang=lang, L=L[lang])
+    return render_template(
+        "print_event_list.html", contacts=contacts, lang=lang, L=L[lang]
+    )
+
 
 @app.route("/imprint")
 def imprint():
     lang = _get_lang()
     return render_template("imprint.html", lang=lang, L=L[lang])
+
 
 @app.route("/organize", methods=["GET", "POST"])
 @auth_required
@@ -93,34 +119,51 @@ def organize():
 
     filter = Filter.from_request(request)
     contacts = DBContact(mysql=mysql).contacts_for_organize(filter=filter)
-    return render_template("organize.html", contacts=contacts, languages=LANGUAGES, L=L["en"])
+    return render_template(
+        "organize.html", contacts=contacts, languages=LANGUAGES, L=L["en"]
+    )
+
 
 @app.route("/organize/new", methods=["GET"])
 @auth_required
 def organize_new():
     contact = ContactForOrganize.empty()
-    return render_template("organize_new.html", contact=contact, languages=LANGUAGES, L=L["en"])
+    return render_template(
+        "organize_new.html", contact=contact, languages=LANGUAGES, L=L["en"]
+    )
+
 
 @app.route("/organize/<int:id>/edit", methods=["GET"])
 @auth_required
 def organize_edit(id: int):
     filter = Filter.for_id(id)
     contacts = DBContact(mysql=mysql).contacts_for_organize(filter=filter)
-    return render_template("organize_edit.html", contact=contacts[0], languages=LANGUAGES, L=L["en"])
+    return render_template(
+        "organize_edit.html", contact=contacts[0], languages=LANGUAGES, L=L["en"]
+    )
+
 
 @app.route("/organize/<int:id>", methods=["DELETE", "POST"])
 @auth_required
 def organize_contact(id: int):
-    if request.method == "POST":  # REST PUT semantics, but restricted to form method options
-        DBContact(mysql=mysql).update(id, ContactForOrganize.from_form_data(request.form), keep_cache=True)
+    if (
+        request.method == "POST"
+    ):  # REST PUT semantics, but restricted to form method options
+        DBContact(mysql=mysql).update(
+            id, ContactForOrganize.from_form_data(request.form), keep_cache=True
+        )
     return redirect(url_for("organize"))
+
 
 @app.route("/organize/<int:id>/delete", methods=["POST"])
 @auth_required
 def organize_contact_delete(id: int):
-    if request.method == "POST":  # REST DELETE semantics, but restricted to form method options
+    if (
+        request.method == "POST"
+    ):  # REST DELETE semantics, but restricted to form method options
         DBContact(mysql=mysql).delete(id)
     return redirect(url_for("organize"))
+
 
 @app.route("/update-events", methods=["GET"])
 def update_events():
@@ -136,9 +179,12 @@ def update_events():
     DBContact(mysql=mysql).update_events_cache(id, events_map)
     return {"events": events_map[lang], "status": 200}
 
+
 @app.route("/cache-events", methods=["GET"])
 def cache_events():
-    contact_and_radar_ids = DBContact(mysql=mysql).contact_to_event_cache(count=NUM_RADAR_IDS_TO_CACHE_PER_REQUEST)
+    contact_and_radar_ids = DBContact(mysql=mysql).contact_to_event_cache(
+        count=NUM_RADAR_IDS_TO_CACHE_PER_REQUEST
+    )
     if not len(contact_and_radar_ids):
         return "nothing to cache"
     for contact_id, radar_group_id in contact_and_radar_ids:
@@ -146,15 +192,19 @@ def cache_events():
         DBContact(mysql=mysql).update_events_cache(contact_id, events_map)
     return f"cached {[contact_id for (contact_id, _) in contact_and_radar_ids]}"
 
+
 @app.route("/cache-osm-data", methods=["GET"])
 def cache_osm_data():
-    contact_and_osm_node_ids = DBContact(mysql=mysql).contact_to_osm_cache(count=NUM_OSM_IDS_TO_CACHE_PER_REQUEST)
+    contact_and_osm_node_ids = DBContact(mysql=mysql).contact_to_osm_cache(
+        count=NUM_OSM_IDS_TO_CACHE_PER_REQUEST
+    )
     if not len(contact_and_osm_node_ids):
         return "nothing to cache"
     for contact_id, osm_node_id in contact_and_osm_node_ids:
         osm_json = get_raw_osm_json(osm_node_id)
         DBContact(mysql=mysql).update_osm_json(contact_id, osm_json)
     return f"cached {[contact_id for (contact_id, _) in contact_and_osm_node_ids]}"
+
 
 @app.route("/parse-osm-data", methods=["GET"])
 def parse_osm_data():
@@ -169,7 +219,15 @@ def parse_osm_data():
 
     return f"parsed {len(contacts_with_osm)} contacts with OSM. Failed: {failed}"
 
-@app.route('/favicon.ico')
-def favicon():
-    return redirect(url_for('static', filename='favicon.ico'))
 
+@app.route("/favicon.ico")
+def favicon():
+    return redirect(url_for("static", filename="favicon.ico"))
+
+
+@app.route("/sitemap.xml")
+def sitemap():
+    template = render_template("sitemap.xml", today=datetime.now().date().isoformat())
+    response = make_response(template)
+    response.headers["Content-Type"] = "application/xml"
+    return response
