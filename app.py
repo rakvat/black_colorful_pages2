@@ -16,7 +16,9 @@ from osm import get_raw_osm_json, parse_osm_json
 
 app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
+
 mysql = MySQL(app)
+
 NUM_RADAR_IDS_TO_CACHE_PER_REQUEST = 8
 NUM_OSM_IDS_TO_CACHE_PER_REQUEST = 10
 
@@ -166,3 +168,8 @@ def parse_osm_data():
             failed.append(contact.id)
 
     return f"parsed {len(contacts_with_osm)} contacts with OSM. Failed: {failed}"
+
+@app.route('/favicon.ico')
+def favicon():
+    return redirect(url_for('static', filename='favicon.ico'))
+

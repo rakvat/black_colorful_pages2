@@ -79,7 +79,6 @@
 
   for(let i = 0; i < previews.length; i++) {
       previews[i].addEventListener("click", (event) => {
-          console.log("!!!", i)
           expand(i)
           const eventsDiv = event.currentTarget.closest(".contact").querySelector(".events");
           if (eventsDiv && !eventsDiv.dataset.hasFreshData) {
