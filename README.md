@@ -4,7 +4,6 @@ This is the source code of https://schwarz-bunte-seiten-berlin.org.
 
 A super simple flask app using mysql.
 
-
 ## Requirements
 
 Python 3.11
