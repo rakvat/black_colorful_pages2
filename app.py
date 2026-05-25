@@ -1,27 +1,27 @@
 import dependencies  # sets sys path for packages (has to be the first line)
+import json
+from datetime import datetime, timedelta
+from functools import wraps
 
 import bcrypt
-from datetime import datetime, timedelta
 from flask import (
-    abort,
     Flask,
+    Response,
+    abort,
     make_response,
     redirect,
     render_template,
     request,
-    Response,
     url_for,
 )
 from flask_mysqldb import MySQL
-from functools import wraps
-import json
 
 from constants import LANGUAGES
 from l10n.l import L
-from model import Filter, ContactForOrganize
+from model import ContactForOrganize, Filter
+from osm import get_raw_osm_json, parse_osm_json
 from persistence import DBContact
 from radar import Radar
-from osm import get_raw_osm_json, parse_osm_json
 
 app = Flask(__name__)
 app.config.from_file("config.json", load=json.load)
@@ -187,10 +187,15 @@ def cache_events():
     )
     if not len(contact_and_radar_ids):
         return "nothing to cache"
+
+    failed_ids = []
     for contact_id, radar_group_id in contact_and_radar_ids:
-        events_map = Radar(radar_group_id).get_events()
-        DBContact(mysql=mysql).update_events_cache(contact_id, events_map)
-    return f"cached {[contact_id for (contact_id, _) in contact_and_radar_ids]}"
+        try:
+            events_map = Radar(radar_group_id).get_events()
+            DBContact(mysql=mysql).update_events_cache(contact_id, events_map)
+        except Exception:
+            failed_ids.append(contact_id)
+    return f"cached: {[contact_id for (contact_id, _) in contact_and_radar_ids]}. failed: {failed_ids}."
 
 
 @app.route("/cache-osm-data", methods=["GET"])
@@ -214,7 +219,7 @@ def parse_osm_data():
         try:
             osm_info_map = parse_osm_json(contact.osm_cached_json)
             DBContact(mysql=mysql).update_osm_info(contact, osm_info_map)
-        except Exception as err:
+        except Exception:
             failed.append(contact.id)
 
     return f"parsed {len(contacts_with_osm)} contacts with OSM. Failed: {failed}"
