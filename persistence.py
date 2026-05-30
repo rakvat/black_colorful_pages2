@@ -254,6 +254,7 @@ class DBContact:
         cursor.execute(
             f"SELECT id, radar_group_id FROM {self.table_name} "
             f"WHERE radar_group_id IS NOT NULL AND (events_cached_at IS NULL OR events_cached_at < '{hours_ago}') "
+            f"ORDER BY CASE WHEN events_cached_at IS NULL THEN 0 ELSE 1 END, events_cached_at ASC "
             f"LIMIT {count}"
         )
 

@@ -1,7 +1,7 @@
 name: cache-events
 on:
   schedule:
-    - cron: "9,13,17,23,24,29,37,49,52 0-4 * * *"
+    - cron: "17 * * * *"
   workflow_dispatch:
 
 jobs:
